@@ -1,0 +1,33 @@
+{
+  "name": "fb-shopify",
+  "version": "0.0.1",
+  "description": "Firebase-Shopify",
+  "main": "server.js",
+  "scripts": {
+    "test": "npm -v",
+    "build:client": "browserify ./src/client/app.js -t [ babelify --presets es2015 ] -o build/client/all.js",
+    "build:server": "babel ./src/server -d build/server && babel ./src/public -d build/public",
+    "build": "npm run build:client && npm run build:server",
+    "watch": "watch \"npm run build\" ./src"
+  },
+  "keywords": [
+    "firebase",
+    "shopify"
+  ],
+  "author": "Pat Coleman <pcole0083@gmail.com> (https://github.com/pcole0083/)",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^3.6.4",
+    "setimmediate": "^1.0.5",
+    "shopify-api-node": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-env": "^1.1.4",
+    "babel-preset-es2015": "^6.18.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "mkdirp": "^0.5.1",
+    "watch": "^1.0.1"
+  }
+}
