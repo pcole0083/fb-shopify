@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm -v",
     "build:client": "browserify ./src/client/app.js -t [ babelify --presets es2015 ] -o build/client/all.js",
-    "build:server": "babel ./src/server -d build/server && babel ./src/public -d build/public",
+    "build:server": "babel ./src/server -d build/server && babel ./src/public -d build/public && cp index.html build/",
     "build": "npm run build:client && npm run build:server",
     "watch": "watch \"npm run build\" ./src"
   },
@@ -17,6 +17,7 @@
   "author": "Pat Coleman <pcole0083@gmail.com> (https://github.com/pcole0083/)",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.14.0",
     "firebase": "^3.6.4",
     "setimmediate": "^1.0.5",
     "shopify-api-node": "^2.2.0"

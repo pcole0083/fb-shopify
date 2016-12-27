@@ -13,7 +13,7 @@ FBAPI
 			product.variants = variants;
 			return product;
 		});
-		document.getElementById('dataDump').innerHTML = products;
+		document.getElementById('dataDump').innerHTML = JSON.stringify(products);
 	});
 
 
