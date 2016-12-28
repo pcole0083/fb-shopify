@@ -52,15 +52,10 @@ export const addData = (path, data) => {
 					}
 				});
 			}
-			console.log(exits);
 			if(!exists){
 				ref.push(data);
 			}
 		});
 
 	return ref;
-}
-
-export const checkProduct = (ref, item) => {
-	return ref.orderByKey().once("value");
 }

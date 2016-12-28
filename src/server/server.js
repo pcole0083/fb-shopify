@@ -5,21 +5,25 @@ import * as SHAPI from './shopify-api.js';
 const collectionId = '401120973';
 
 const fbCollections = FBAPI.getRef('shopify/collections');
+const fbProducts 	= FBAPI.getRef('shopify/products');
 
 /*
 SHAPI.
 	getCollectionById(collectionId, 10, null, (collection) => {
 		FBAPI.addData('shopify/collections', collection);
 	});
-
-SHAPI.
+*/
+/*SHAPI.
 	getProductsCollection(collectionId, 10, null, (list) => {
 		//console.log(list);
 		list.forEach((item) => {
-			FBAPI.addData('shopify/products', item);
+			item['collection_id'] = collectionId;
+
+			FBAPI
+				.addData('shopify/products/', item);
 		});
-	});
-*/	
+	});*/
+	
 
 const app = express();
 
@@ -30,9 +34,9 @@ app
 		response.redirect(301, '/collection');
 	})
 
-	.get('/collection', (request, response) => {
-		var blocks = ['fixed', 'movable', 'rotating'];
-		
+	.get('/collection/:name', (request, response) => {
+		var name = decodeURIComponent(request.params.name);
+
 		FBAPI
 			.listen(fbCollections, 'once', 'value')
 			.then((snapshot) => {
@@ -40,7 +44,76 @@ app
 				if(!json){
 					return response.send('Error getting the collection. Snaposhot is null.');
 				}
-				return response.json(Object.keys(json));
+
+				var filtered = Object.keys(json).map((key) => {
+					let collection = json[key];
+					if(collection.title.toLowerCase() !== name.toLowerCase()){
+						return false;
+					}
+					return collection;
+				});
+
+				return response.json(filtered);
+			});
+	})
+
+	.get('/products', (request, response) => {
+		FBAPI
+			.listen(fbProducts, 'once', 'value')
+			.then((snapshot) => {
+				var json = snapshot.exportVal();
+				if(!json){
+					return response.send('Error, could not find any products. Snapshot is null.');
+				}
+
+				var products = Object.keys(json).map((key) => {
+					let product = json[key];
+					return product;
+				});
+
+				return response.json(products);
+			});
+	})
+
+	.get('/products/:collectionName', (request, response) => {
+		var collectionName = decodeURIComponent(request.params.collectionName);
+		//figure out how to get collection id from the the collectionName then pass it through to products
+
+		FBAPI
+			.listen(fbCollections, 'once', 'value')
+			.then((snapshot) => {
+				var json = snapshot.exportVal();
+				if(!json){
+					return response.send('Error getting the collection. Snaposhot is null.');
+				}
+
+				var col_id = Object.keys(json).map((key) => {
+					let collection = json[key];
+					if(collection.title.toLowerCase() !== collectionName.toLowerCase()){
+						return false;
+					}
+					return collection.id;
+				})[0];
+
+				FBAPI
+					.listen(fbProducts, 'once', 'value')
+					.then((snapshot) => {
+						var json = snapshot.exportVal();
+						if(!json){
+							return response.send('Error, could not find any products. Snapshot is null.');
+						}
+
+						var products = Object.keys(json).map((key) => {
+							let product = json[key];
+
+							if(~~product.collection_id !== col_id){
+								return false;
+							}
+							return product;
+						});
+
+						return response.json(products);
+					});
 			});
 	});
 
