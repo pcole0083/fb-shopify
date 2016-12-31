@@ -7,8 +7,16 @@
         <link rel='stylesheet' href='/public/lib/skeleton/css/skeleton.css' />
     </head>
     <body>
-        <div id='app' class='container'></div>
-        <pre id='dataDump'></pre>
+        <div id='app' class='container'>
+            <form action="collection/new">
+                <input name="collection_name" placeholder="Collection Name" />
+                <button type="submit">Get New Collection</button>
+            </form>
+            <div class="existing-producs">
+                <h2>Products</h2>
+                <ul id='dataDump'></ul>
+            </div>
+        </div>
         <script src='./build/client/all.js'></script>
     </body>
 </html>

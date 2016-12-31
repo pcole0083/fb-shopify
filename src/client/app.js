@@ -13,7 +13,12 @@ FBAPI
 			product.variants = variants;
 			return product;
 		});
-		document.getElementById('dataDump').innerHTML = products[0].title;
+
+		var productTitles = products.map((product) => {
+			return '<li>'+product.title+'</li>';
+		}).join('');
+
+		document.getElementById('dataDump').innerHTML = productTitles;
 	});
 
 
