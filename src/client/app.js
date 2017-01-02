@@ -1,4 +1,6 @@
+import $ from 'jquery';
 import * as FBAPI from '../public/firebase-api.js';
+//import fetchData from './fetch-data.js';
 
 let ref = FBAPI.getRef('shopify/products');
 FBAPI
@@ -21,7 +23,6 @@ FBAPI
 		document.getElementById('dataDump').innerHTML = productTitles;
 	});
 
-
 function dataSplit(stringData){
 	if(!stringData){
 		return;
@@ -40,4 +41,36 @@ function dataSplit(stringData){
 		});
 		return Object.assign.apply(Object, optArray);
 	});
+}
+
+var form = document.querySelector('#newCollection');
+form.addEventListener('submit', getCollection);
+
+function getCollection(e){
+	e.preventDefault();
+	var formData = new FormData(this),
+		json = {};
+	
+	for(let p of formData){
+		json[p[0]] = p[1];
+	}
+
+	$.ajax({
+		url: './collections',
+		type: 'POST',
+		dataType: 'json',
+		data: json
+	}).then( (response) => {
+		console.log(response);
+	});
+
+	/*fetchData.set({
+		url: 'http://pcoleman-mb.internal.pixafy.com:3030/collections',
+		body: json
+	}, function(promise){
+		var cast = Promise.resolve(promise);
+        cast.then(function(data){
+            console.log(data);
+        });
+	});*/
 }

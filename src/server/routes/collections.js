@@ -1,7 +1,10 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import * as FBAPI from '../../public/firebase-api.js';
+import * as SHAPI from '../shopify-api.js';
 
 const collectionsRouter = express.Router();
+const urlencode = bodyParser.urlencoded({ extended: false });
 const fbCollections = FBAPI.getRef('shopify/collections');
 
 const collectionCallback = function(name, response) {
@@ -25,15 +28,29 @@ const collectionCallback = function(name, response) {
 	}
 };
 
-collectionsRouter.route('/')
+collectionsRouter
+	.route('/')
 	.get( (request, response) => {
 		FBAPI
 			.listen(fbCollections, 'once', 'value')
 			.then(collectionCallback(null, response));
+	})
+	.post(urlencode, (request, response) => {
+
+		let collectionName = request.body.collection_name;
+
+		SHAPI.
+			getCollectionByName(collectionName, null, (collections) => {
+				let collection = !!collections.length ? collections[0] : {'error': 'Collection '+collectionName+' not found.'};
+				response.json([{'search': collectionName}, collection]);
+				// if(!!collection && !collection.error){
+				// 	FBAPI.addData('shopify/collections', collection);
+				// }
+			});
 	});
 
-collectionsRouter.route('/:name')
-
+collectionsRouter
+	.route('/:name')
 	.all( (request, response, next) => {
 		request.collectionName = decodeURIComponent(request.params.name);
 		next();

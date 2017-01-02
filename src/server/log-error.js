@@ -17,7 +17,7 @@ function _writeToFile(dirPath, filename, errorData){
 			process.exit(1);
 		}
 		console.log(filename+' logged successfully');
-		process.exit();
+		//process.exit();
 	});
 }
 

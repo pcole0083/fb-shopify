@@ -22,6 +22,21 @@ export const getCollectionById = (collection_id, number, fields, callback) => {
 	});
 }
 
+export const getCollectionByName = (collection_name, fields, callback) => {
+	let defaultFields = ['id', 'title', 'products_count'];
+
+	shopify.customCollection.list({
+		'limit': 1,
+		'title': collection_name,
+		'fields': fields || defaultFields
+	})
+	.then(collection => callback(collection))
+	.catch(err => {
+		logError('shopify', err);
+		callback({'error': 'Collection Name '+collection_name+' not found.'});
+	});
+}
+
 export const getProductsCollection = (collection_id, number, fields, callback) => {
 	let defaultFields = ['id'];
 
