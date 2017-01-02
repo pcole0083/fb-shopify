@@ -42,7 +42,7 @@ function mkdir(dir_path, callback){
 function getDateString(){
 	var date = new Date();
 	var dateArray = [
-		date.getMonth(),
+		date.getMonth()+1,
 		date.getDate(),
 		date.getFullYear(),
 		Date.now()

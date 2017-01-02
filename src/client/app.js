@@ -2,26 +2,38 @@ import $ from 'jquery';
 import * as FBAPI from '../public/firebase-api.js';
 //import fetchData from './fetch-data.js';
 
-let ref = FBAPI.getRef('shopify/products');
-FBAPI
-	.listen(ref, 'once', 'value')
-	.then(function(snapshot){
-		let json = snapshot.exportVal();
-		let products = Object.keys(json).map((key) => {
-			let product = json[key];
-			let options = dataSplit(product.options);
-			let variants = dataSplit(product.variants);
-			product.options = options;
-			product.variants = variants;
-			return product;
+function getCollectionProducts(collection_id){
+	let ref = FBAPI.getRef('shopify/products');
+	FBAPI
+		.listen(ref, 'once', 'value')
+		.then(function(snapshot){
+			let json = snapshot.exportVal();
+			let products = Object.keys(json).filter((key) => {
+				let product = json[key];
+				if(product.collection_id === collection_id){
+					return key;
+				}
+				return false;
+			}).map((key) => {
+				let product = json[key];
+				let options = dataSplit(product.options);
+				let variants = dataSplit(product.variants);
+				product.options = options;
+				product.variants = variants;
+				return product;
+			});
+
+			var productTitles = !!products.length ? products.map((product) => {
+				return '<li>'+product.title+'</li>';
+			}) : ['<li>No products found for this collection.</li>'];
+
+			//console.log(productTitles);
+
+			document.getElementById('dataDump').innerHTML = productTitles.join('');
+
+			document.getElementById('currentCollectionId').value = collection_id;
 		});
-
-		var productTitles = products.map((product) => {
-			return '<li>'+product.title+'</li>';
-		}).join('');
-
-		document.getElementById('dataDump').innerHTML = productTitles;
-	});
+}
 
 function dataSplit(stringData){
 	if(!stringData){
@@ -43,10 +55,39 @@ function dataSplit(stringData){
 	});
 }
 
-var form = document.querySelector('#newCollection');
-form.addEventListener('submit', getCollection);
+var getAllCollectionOptions = (function(){
+	var select = document.querySelector('#collectionName'),
+		options = [];
 
-function getCollection(e){
+	if(!select){
+		return;
+	}
+
+	$.ajax({
+		url: './collections',
+		type: 'GET',
+		dataType: 'json'
+	}).then( (response) => {
+
+		options = response.map( (opt) => {
+			return '<option value="'+opt.id+'" data-product-count="'+opt.product_count+'">'+opt.title+'</option>';
+		});
+
+		select.innerHTML = select.innerHTML + options.join('');
+	});
+
+	select.addEventListener('change', function(e){
+		var select = this,
+			collection_id = this.value;
+		getCollectionProducts(collection_id);
+	});
+
+}());
+
+var collectionForm = document.querySelector('#newCollection');
+collectionForm.addEventListener('submit', createNewCollection);
+
+function createNewCollection(e){
 	e.preventDefault();
 	var formData = new FormData(this),
 		json = {};
@@ -56,12 +97,20 @@ function getCollection(e){
 	}
 
 	$.ajax({
-		url: './collections',
+		url: './collections/new',
 		type: 'POST',
 		dataType: 'json',
 		data: json
-	}).then( (response) => {
-		console.log(response);
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let collection = returnedJson[1];
+		let select = document.querySelector('#collectionName');
+		let newOption = '<option value="'+collection.id+'" data-product-count="0">'+collection.title+'</option>';
+		select.innerHTML =  select.innerHTML + newOption;
+		select.selectedIndex = (select.children.length - 1);
 	});
 
 	/*fetchData.set({
@@ -74,3 +123,34 @@ function getCollection(e){
         });
 	});*/
 }
+
+var productForm = document.querySelector('#newProduct');
+productForm.addEventListener('submit', createNewProduct);
+
+function createNewProduct(e){
+	e.preventDefault();
+	var formData = new FormData(this),
+		json = {};
+	
+	for(let p of formData){
+		json[p[0]] = p[1];
+	}
+
+	$.ajax({
+		url: './products/new',
+		type: 'POST',
+		dataType: 'json',
+		data: json
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let product = returnedJson[1];
+		//console.log(product);
+		if(!!product){
+			getCollectionProducts(json['collection_id']);
+		}
+	});
+}
+

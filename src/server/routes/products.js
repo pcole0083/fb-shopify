@@ -1,11 +1,18 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+
 import * as FBAPI from '../../public/firebase-api.js';
+import * as SHAPI from '../shopify-api.js';
 
 const productsRouter = express.Router();
+const urlencode = bodyParser.urlencoded({ extended: false });
+
 const fbCollections = FBAPI.getRef('shopify/collections');
 const fbProducts 	= FBAPI.getRef('shopify/products');
 
-productsRouter.route('/')
+
+productsRouter
+	.route('/')
 	.get( (request, response) => {
 		FBAPI
 			.listen(fbProducts, 'once', 'value')
@@ -24,8 +31,8 @@ productsRouter.route('/')
 			});
 	});
 
-productsRouter.route('/:name')
-
+productsRouter
+	.route('/:name')
 	.all( (request, response, next) => {
 		request.collectionName = decodeURIComponent(request.params.name);
 		next();
@@ -70,6 +77,47 @@ productsRouter.route('/:name')
 						return response.json(products);
 					});
 			});
+	});
+
+productsRouter
+	.route('/new')
+	.post(urlencode, (request, response) => {
+		//console.log(request.body);
+		let productName = request.body.product_name;
+		let collectionId = request.body.collection_id;
+
+		if(!productName){
+			return response.status(200).json([{'new': productName}, request.body]);
+		}
+
+		let productOptions = {
+			"title": productName,
+			"metafields": [
+		    	{
+			        "key": "collection_id",
+			        "value": collectionId,
+			        "value_type": "string",
+			        "namespace": "global"
+		     	}
+		    ]
+		};
+
+		SHAPI.
+			setProduct(productOptions, (product) => {
+				let status = 201;
+				product = !!product ? product : {'error': 'Error something went wrong and we cannot verify if '+productName+' was created.'};
+				
+				if(product.error){
+					status = product.statusCode || 200;
+				}
+
+				product['collection_id'] = collectionId;
+
+				fbProducts.push(product);
+
+				response.status(status).json([{'new': productName}, product]);
+			});
+
 	});
 
 export default productsRouter;

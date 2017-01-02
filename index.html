@@ -8,13 +8,33 @@
     </head>
     <body>
         <div id='app' class='container'>
+            <select id="collectionName" name="collection_name">
+                <option value="null">Please select a collection</option>
+            </select>
+            <hr>
+            <p>or</p>
+            <hr>
             <form id="newCollection">
-                <input name="collection_name" placeholder="Collection Name" />
-                <button type="submit">Get New Collection</button>
+                <input name="collection_name_new" placeholder="Collection Name" />
+                <button type="submit">Create New Collection</button>
             </form>
+            <hr>
             <div class="existing-producs">
                 <h2>Products</h2>
                 <ul id='dataDump'></ul>
+                <form id="addProduct">
+                    <select id="allProducts" name="collection_name">
+                        <option value="null">Select a product to add</option>
+                    </select>
+                    <button type="submit">Add Product to Collection</button>
+                </form>
+                <hr>
+                <form id="newProduct">
+                    <input name="product_name" placeholder="Product Name" />
+                    <input id="currentCollectionId" type="hidden" name="collection_id" value="" />
+                    <button type="submit">Create New Product</button>
+                </form>
+                <hr>
             </div>
         </div>
         <script src='./build/client/all.js'></script>

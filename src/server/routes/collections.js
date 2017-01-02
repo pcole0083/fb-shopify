@@ -42,7 +42,7 @@ collectionsRouter
 		SHAPI.
 			getCollectionByName(collectionName, null, (collections) => {
 				let collection = !!collections.length ? collections[0] : {'error': 'Collection '+collectionName+' not found.'};
-				response.json([{'search': collectionName}, collection]);
+				response.status(200).json([{'search': collectionName}, collection]);
 				// if(!!collection && !collection.error){
 				// 	FBAPI.addData('shopify/collections', collection);
 				// }
@@ -62,6 +62,36 @@ collectionsRouter
 		FBAPI
 			.listen(fbCollections, 'once', 'value')
 			.then(collectionCallback(name, response));
-	})
+	});
+
+collectionsRouter
+	.route('/new')
+	.post(urlencode, (request, response) => {
+		//console.log(request.body);
+		let collectionName = request.body.collection_name_new;
+
+		if(!collectionName){
+			return response.status(200).json([{'new': collectionName}, request.body]);
+		}
+
+		SHAPI.
+			setNewCollectionName(collectionName, (collection) => {
+				let status = 201;
+				collection = !!collection ? collection : {'error': 'Error something went wrong and we cannot verify if '+collectionName+' was created.'};
+				
+				if(collection.error){
+					status = collection.statusCode || 200;
+				}
+
+				fbCollections.push({
+					'id': collection.id,
+					'title': collection.title,
+					'products_count': 0
+				});
+
+				response.status(status).json([{'new': collectionName}, collection]);
+			});
+
+	});
 
 export default collectionsRouter;

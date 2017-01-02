@@ -9,6 +9,14 @@ const shopify = new Shopify({
 
 export default shopify;
 
+/**
+ * Collections
+ */
+
+/**
+ * - getters
+ */
+
 export const getCollectionById = (collection_id, number, fields, callback) => {
 	let defaultFields = ['id', 'title', 'products_count'];
 
@@ -37,6 +45,25 @@ export const getCollectionByName = (collection_name, fields, callback) => {
 	});
 }
 
+/**
+ *  - setters
+ */
+
+export const setNewCollectionName = (collection_name, callback) => {
+	shopify.customCollection.create({
+		"title": collection_name
+	})
+	.then(collection => callback(collection))
+	.catch(err => {
+		logError('shopify', err);
+		callback({'error': err});
+	});
+}
+
+/**
+ * Products
+ */
+
 export const getProductsCollection = (collection_id, number, fields, callback) => {
 	let defaultFields = ['id'];
 
@@ -48,6 +75,20 @@ export const getProductsCollection = (collection_id, number, fields, callback) =
 	.then(list => callback(list))
 	.catch(err => {
 		logError('shopify', err);
+		callback({'error': err});
+	});
+}
+
+/**
+ *  - setters
+ */
+
+export const setProduct = (product_options, callback) => {
+	shopify.product.create(product_options)
+	.then(collection => callback(collection))
+	.catch(err => {
+		logError('shopify', err);
+		callback({'error': err});
 	});
 }
 
