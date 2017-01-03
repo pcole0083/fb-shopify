@@ -4,37 +4,47 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title> Vidcom </title>
-        <link rel='stylesheet' href='/public/lib/skeleton/css/skeleton.css' />
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     </head>
     <body>
-        <div id='app' class='container'>
-            <select id="collectionName" name="collection_name">
-                <option value="null">Please select a collection</option>
-            </select>
-            <hr>
-            <p>or</p>
-            <hr>
-            <form id="newCollection">
-                <input name="collection_name_new" placeholder="Collection Name" />
-                <button type="submit">Create New Collection</button>
-            </form>
-            <hr>
-            <div class="existing-producs">
-                <h2>Products</h2>
-                <ul id='dataDump'></ul>
-                <form id="addProduct">
-                    <select id="allProducts" name="collection_name">
-                        <option value="null">Select a product to add</option>
+        <div id='app' class='container-fluid'>
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>Firebase + Shopify Node Sever</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <select id="collectionName" name="collection_name">
+                        <option value="null">Please select a collection</option>
                     </select>
-                    <button type="submit">Add Product to Collection</button>
-                </form>
-                <hr>
-                <form id="newProduct">
-                    <input name="product_name" placeholder="Product Name" />
-                    <input id="currentCollectionId" type="hidden" name="collection_id" value="" />
-                    <button type="submit">Create New Product</button>
-                </form>
-                <hr>
+                    <hr>
+                    <p>or</p>
+                    <hr>
+                    <form id="newCollection">
+                        <input name="collection_name_new" placeholder="Collection Name" />
+                        <button type="submit" class="btn btn-primary">Create New Collection</button>
+                    </form>
+                    <hr>
+                    <div class="existing-producs">
+                        <h2>Products</h2>
+                        <ul id='dataDump'></ul>
+                        <form id="addProduct">
+                            <select id="allProducts" name="collection_name">
+                                <option value="null">Select a product to add</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Add Product to Collection</button>
+                        </form>
+                        <hr>
+                        <form id="newProduct">
+                            <input name="product_name" placeholder="Product Name" />
+                            <input id="currentCollectionId" type="hidden" name="collection_id" value="" />
+                            <button type="submit" class="btn btn-primary">Create New Product</button>
+                        </form>
+                        <hr>
+                    </div>
+                </div>
             </div>
         </div>
         <script src='./build/client/all.js'></script>
