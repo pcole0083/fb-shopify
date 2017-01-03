@@ -43,7 +43,12 @@ function getCollectionProducts(collection_id){
 
 			document.getElementById('allOtherProducts').innerHTML = notInCollection.join('');
 
-			document.getElementById('currentCollectionId').value = collection_id;
+			var hiddenCollectionIdInputs = document.querySelectorAll('.current-collection-id');
+			if(hiddenCollectionIdInputs.length){
+				for (var j = 0; j < hiddenCollectionIdInputs.length; j++) {
+					hiddenCollectionIdInputs[j].value = collection_id;
+				}
+			}
 		});
 }
 
@@ -165,4 +170,35 @@ function createNewProduct(e){
 		}
 	});
 }
+
+var productToCollection = document.querySelector('#addProduct')
+productToCollection.addEventListener('submit', changeCollection);
+
+function changeCollection(e) {
+	e.preventDefault();
+	var formData = new FormData(this),
+		json = {};
+
+	for(let p of formData){
+		json[p[0]] = p[1];
+	}
+
+	$.ajax({
+		url: './collections/add',
+		type: 'POST',
+		dataType: 'json',
+		data: json
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let collect = returnedJson[1];
+		console.log(collect);
+		if(!!collect){
+			getCollectionProducts(json['collection_id']);
+		}
+	});
+}
+
 

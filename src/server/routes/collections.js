@@ -6,6 +6,7 @@ import * as SHAPI from '../shopify-api.js';
 const collectionsRouter = express.Router();
 const urlencode = bodyParser.urlencoded({ extended: false });
 const fbCollections = FBAPI.getRef('shopify/collections');
+const fbProducts = FBAPI.getRef('shopify/products');
 
 const collectionCallback = function(name, response) {
 	name = !!name ? name.toLowerCase() : null;
@@ -97,7 +98,6 @@ collectionsRouter
 collectionsRouter
 	.route('/add')
 	.post(urlencode, (request, response) => {
-		//console.log(request.body);
 		let collectionId = request.body.collection_id;
 		let productId = request.body.product_id;
 
@@ -106,43 +106,44 @@ collectionsRouter
 		}
 
 		SHAPI.
-			addProductToCollection(collectionId, productId, (collection) => {
-				let status = 201;
-				collection = !!collection ? collection : {'error': 'Error something went wrong and we cannot verify if '+collectionId+' was created.'};
-				
-				if(collection.error){
-					status = collection.statusCode || 200;
+			addProductToCollection(collectionId, productId, (collect) => {
+				let status = 200;
+				collect = !!collect ? collect : {'error': 'Error something went wrong and we cannot verify if '+productId+' was moved to '+collectionId+'.'};
+				//console.log(collect);
+				if(!!collect.error){
+					status = collect.statusCode || 200;
+					return response.status(status).json([{'id': collectionId}, collect.error]);
 				}
 
 				FBAPI
 					.addData('shopify/collection', {
-						'id': collection.id,
-						'title': colleciton.title,
-						'products_count': collection.products_count || 1
+						'id': collectionId,
+						'products_count': collect.position || 1
 					});
 
-				let p_ref = FBAPI.getRef('shopify/products');
 				FBAPI
-					.listen(p_ref, 'once', 'value')
+					.listen(fbProducts, 'once', 'value')
 					.then(function(snapshot){
 						let json = snapshot.exportVal();
-						let product = Object.keys(json).find((key) =>{
-							let prdt = json[key];
-							if(prdt.id === productId){
-								return prdt;
+						let productKey = Object.keys(json).find((key) =>{
+							let product = json[key];
+							if(~~product.id === ~~productId){
+								return key;
 							}
 							return false;
 						});
+						
 						//if product was made in Shopify Admin, need to add it to FB now
-						if(!!product){
-							let np_ref = FBAPI.getRef('shopify/products/'+productId);
-							np_ref.child('collection_id').set(collectionId);
+						if(!!productKey){
+							let np_ref = FBAPI.getRef('shopify/products/'+productKey);
+							np_ref.update({'collection_id': collectionId});
 						}
 
-						response.status(status).json([{'id': collectionId}, collection]);
+						response.status(status).json([{'id': collectionId}, collect]);
 					});
 			});
 
 	});
 
 export default collectionsRouter;
+

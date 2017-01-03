@@ -10,24 +10,6 @@ const collectionId = '401120973';
 const fbCollections = FBAPI.getRef('shopify/collections');
 const fbProducts 	= FBAPI.getRef('shopify/products');
 
-/*
-SHAPI.
-	getCollectionById(collectionId, 10, null, (collection) => {
-		FBAPI.addData('shopify/collections', collection);
-	});
-*/
-/*SHAPI.
-	getProductsCollection(collectionId, 10, null, (list) => {
-		//console.log(list);
-		list.forEach((item) => {
-			item['collection_id'] = collectionId;
-
-			FBAPI
-				.addData('shopify/products/', item);
-		});
-	});*/
-	
-
 const app = express();
 
 app

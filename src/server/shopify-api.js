@@ -14,7 +14,7 @@ export default shopify;
  */
 
 export const getCurrentUser = (callback) => {
-	shopify.user.current()
+	return shopify.user.current()
 	.then(user => callback(user))
 	.catch(err => {
 		logError('shopify', err);
@@ -30,9 +30,9 @@ export const getCurrentUser = (callback) => {
  */
 
 export const getCollectionById = (collection_id, number, fields, callback) => {
-	let defaultFields = ['id', 'title', 'products_count'];
+	let defaultFields = ['id', 'title', 'products_count', 'collects'];
 
-	shopify.customCollection.get(collection_id, {
+	return shopify.customCollection.get(collection_id, {
 		'limit': number || 10,
 		'fields': fields || defaultFields
 	})
@@ -45,7 +45,7 @@ export const getCollectionById = (collection_id, number, fields, callback) => {
 export const getCollectionByName = (collection_name, fields, callback) => {
 	let defaultFields = ['id', 'title', 'products_count'];
 
-	shopify.customCollection.list({
+	return shopify.customCollection.list({
 		'limit': 1,
 		'title': collection_name,
 		'fields': fields || defaultFields
@@ -73,10 +73,45 @@ export const setNewCollectionName = (collection_name, callback) => {
 }
 
 export const addProductToCollection = (collection_id, product_id, callback) => {
-	shopify.customCollection.update(collection_id, {
-		"collects": { "product_id": product_id }
+	var collectAlreadyExits = false;
+	collection_id = Number(collection_id);
+	product_id = Number(product_id);
+	/**
+	 * Collect link products and custom collections
+	 * There is 1 collect for each product->customCollection relationship
+	 */
+	shopify.collect.list({
+		'product_id': product_id,
+		'fields': ['id', 'collection_id', 'product_id']
 	})
-	.then(collection => callback(collection))
+	.then(collects => {
+		//console.log(collects);
+		let collectKey = Object.keys(collects).find((key) => {
+			let clt = collects[key];
+			if(clt.collection_id === collection_id){
+				collectAlreadyExits = true;
+				return key;
+			}
+			return false;
+		});
+
+		let collect = collects[collectKey];
+
+		if(!collectAlreadyExits){
+			shopify.collect.create({
+				'product_id': product_id,
+				'collection_id': collection_id
+			})
+			.then(collect => callback(collect))
+			.catch(err => {
+				logError('shopify', err);
+				callback({'error': err});
+			});
+		}
+		else {
+			callback(collect);
+		}
+	})
 	.catch(err => {
 		logError('shopify', err);
 		callback({'error': err});
@@ -106,12 +141,28 @@ export const getProductsCollection = (collection_id, number, fields, callback) =
  *  - setters
  */
 
-export const setProduct = (product_options, callback) => {
+export const setProduct = (product_options, collectionId, callback) => {
 	shopify.product.create(product_options)
-	.then(collection => callback(collection))
+	.then(product => {
+		if(!!collectionId){
+			shopify.collect.create({
+				'product_id': product.id,
+				'collection_id': collectionId
+			})
+			.then(collect => callback(product))
+			.catch(err => {
+				logError('shopify', err);
+				callback({'error': err});
+			})
+		}
+		else {
+			callback(product);
+		}
+	})
 	.catch(err => {
 		logError('shopify', err);
 		callback({'error': err});
 	});
+
 }
 

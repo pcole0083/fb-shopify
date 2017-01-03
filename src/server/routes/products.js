@@ -103,7 +103,7 @@ productsRouter
 		};
 
 		SHAPI.
-			setProduct(productOptions, (product) => {
+			setProduct(productOptions, collectionId, (product) => {
 				let status = 201;
 				product = !!product ? product : {'error': 'Error something went wrong and we cannot verify if '+productName+' was created.'};
 				
