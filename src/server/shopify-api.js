@@ -10,6 +10,18 @@ const shopify = new Shopify({
 export default shopify;
 
 /**
+ * User
+ */
+
+export const getCurrentUser = (callback) => {
+	shopify.user.current()
+	.then(user => callback(user))
+	.catch(err => {
+		logError('shopify', err);
+	});
+}
+
+/**
  * Collections
  */
 
