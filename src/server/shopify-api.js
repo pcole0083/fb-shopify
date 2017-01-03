@@ -60,6 +60,17 @@ export const setNewCollectionName = (collection_name, callback) => {
 	});
 }
 
+export const addProductToCollection = (collection_id, product_id, callback) => {
+	shopify.customCollection.update(collection_id, {
+		"collects": { "product_id": product_id }
+	})
+	.then(collection => callback(collection))
+	.catch(err => {
+		logError('shopify', err);
+		callback({'error': err});
+	});
+}
+
 /**
  * Products
  */

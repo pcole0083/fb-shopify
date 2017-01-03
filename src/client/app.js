@@ -8,10 +8,14 @@ function getCollectionProducts(collection_id){
 		.listen(ref, 'once', 'value')
 		.then(function(snapshot){
 			let json = snapshot.exportVal();
+			let not_in = [];
 			let products = Object.keys(json).filter((key) => {
 				let product = json[key];
 				if(product.collection_id === collection_id){
 					return key;
+				}
+				else {
+					not_in.push(product);
 				}
 				return false;
 			}).map((key) => {
@@ -27,9 +31,17 @@ function getCollectionProducts(collection_id){
 				return '<li>'+product.title+'</li>';
 			}) : ['<li>No products found for this collection.</li>'];
 
+			var notInCollection = !!not_in.length ? not_in.map((product) => {
+				return '<option value="'+product.id+'">'+product.title+'</option>';
+			}) : [];
+
+			notInCollection.unshift('<option value="null">Select a product to add</option>');
+
 			//console.log(productTitles);
 
 			document.getElementById('dataDump').innerHTML = productTitles.join('');
+
+			document.getElementById('allOtherProducts').innerHTML = notInCollection.join('');
 
 			document.getElementById('currentCollectionId').value = collection_id;
 		});
