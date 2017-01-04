@@ -9,7 +9,7 @@
     "build:server": "babel ./src/server -d build/server && babel ./src/public -d build/public && cp index.html build/",
     "build": "npm run build:client && npm run build:server",
     "watch": "watch \"npm run build\" ./src",
-    "start": "node build/server/server.js"
+    "start": "nodemon build/server/server.js"
   },
   "keywords": [
     "firebase",
@@ -27,11 +27,13 @@
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-plugin-inline-json-import": "^0.1.6",
     "babel-preset-env": "^1.1.4",
     "babel-preset-es2015": "^6.18.0",
     "babelify": "^7.3.0",
     "browserify": "^13.1.1",
     "mkdirp": "^0.5.1",
+    "nodemon": "^1.11.0",
     "watch": "^1.0.1"
   }
 }

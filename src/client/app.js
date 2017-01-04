@@ -2,6 +2,23 @@ import $ from 'jquery';
 import * as FBAPI from '../public/firebase-api.js';
 //import fetchData from './fetch-data.js';
 
+var getFirebaseCreds = (function(){
+	$.ajax({
+		url: './configs/firebase',
+		type: 'GET',
+		dataType: 'json',
+	}).then(configObj => {
+		if(!!configObj.error){
+			document.querySelector('#setupFirebase').classList.remove('hidden');
+		}
+		else {
+			console.log(configObj);
+			getAllCollectionOptions();
+			document.querySelector('#setupComplete').classList.remove('hidden');
+		}
+	});
+}());
+
 function getCollectionProducts(collection_id){
 	let ref = FBAPI.getRef('shopify/products');
 	FBAPI
@@ -72,7 +89,7 @@ function dataSplit(stringData){
 	});
 }
 
-var getAllCollectionOptions = (function(){
+var getAllCollectionOptions = function(){
 	var select = document.querySelector('#collectionName'),
 		options = [];
 
@@ -99,7 +116,36 @@ var getAllCollectionOptions = (function(){
 		getCollectionProducts(collection_id);
 	});
 
-}());
+};
+
+var fbForm = document.querySelector('#firebaseConfig');
+fbForm.addEventListener('submit', submitConfig);
+
+function submitConfig(e){
+	e.preventDefault();
+	var formData = new FormData(this),
+		json = {};
+	
+	for(let p of formData){
+		json[p[0]] = p[1];
+	}
+
+	$.ajax({
+		url: './configs/firebase',
+		type: 'POST',
+		dataType: 'json',
+		data: json
+	}).then( (returnedJson) => {
+		if(!!returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+		else {
+			return setTimeout(function(){
+				window.location.reload();
+			}, 12000);
+		}
+	});
+}
 
 var collectionForm = document.querySelector('#newCollection');
 collectionForm.addEventListener('submit', createNewCollection);

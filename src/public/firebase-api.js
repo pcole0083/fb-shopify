@@ -1,6 +1,7 @@
 import firebase from 'firebase';
+import * as configJSON from 'firebase.json';
 // Initialize Firebase
-const config = {
+const config = !!configJSON.apiKey ? configJSON : {
 	apiKey: "AIzaSyD6yyYdIQU6CAInFyjynkAvLNzOkYuOyfM",
 	authDomain: "vidcom-3a1ba.firebaseapp.com",
 	databaseURL: "https://vidcom-3a1ba.firebaseio.com",

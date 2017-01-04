@@ -14,7 +14,30 @@
                     <h1>Firebase + Shopify Node Sever</h1>
                 </div>
             </div>
-            <div class="row">
+            <div id="setupFirebase" class="row hidden">
+                <div class="col-xs-12">
+                    <h2>Setup Firebase</h2>
+                    <form id="firebaseConfig">
+                        <div class="formGroup">
+                            <label for="apiKey">API Key</label>
+                            <input type="text" name="apiKey" class="form-control" id="apiKey" placeholder="API Key">
+                        </div>
+                        <hr>
+                        <div class="formGroup">
+                            <label for="authDomain">Auth Domain</label>
+                            <input type="text" name="authDomain" class="form-control" id="authDomain" placeholder="Auth Domain">
+                        </div>
+                        <hr>
+                        <div class="formGroup">
+                            <label for="databaseURL">Database URL</label>
+                            <input type="text" name="databaseURL" class="form-control" id="databaseURL" placeholder="Database URL">
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div id="setupComplete" class="row hidden">
                 <div class="col-xs-12">
                     <select id="collectionName" name="collection_name">
                         <option value="null">Please select a collection</option>
