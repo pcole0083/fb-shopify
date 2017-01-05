@@ -4,6 +4,7 @@ import config from './config.js';
 import collectionsRouter from './server/routes/collections.js';
 import productsRouter from './server/routes/products.js';
 import configsRouter from './server/routes/configs.js';
+import storeRouter from './server/routes/store.js';
 
 const env = process.env.NODE_ENV || 'development';
 const env_config = config[env];
@@ -17,6 +18,8 @@ app
 	.use(express.static('./'))
 
 	.use('/configs', configsRouter)
+
+	.use('/store', storeRouter)
 
 	.use('/collections', collectionsRouter)
 

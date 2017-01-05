@@ -18,6 +18,21 @@ var checkFirebaseCreds = (function(){
 	});
 }());
 
+var getStoreInfo = (function(){
+	$.ajax({
+		url: './store',
+		type: 'GET',
+		dataType: 'json',
+	}).then(storeData => {
+		if(!!storeData.error){
+			document.querySelector('#setupFirebase').classList.remove('hidden');
+		}
+		else {
+			console.log(storeData);
+		}
+	});
+}());
+
 function getCollectionProducts(collection_id){
 	let ref = FBAPI.getRef('shopify/products');
 	FBAPI

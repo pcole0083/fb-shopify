@@ -9,7 +9,7 @@
     "build:server": "babel ./src/app.js -o ./build/app.js && babel ./src/config.js -o ./build/config.js && babel ./src/server -d build/server && babel ./src/public -d build/public && cp index.html build/",
     "build": "npm run build:client && npm run build:server",
     "watch": "watch \"npm run build\" ./src",
-    "start": "nodemon build/app.js"
+    "start": "nodemon --delay 3000ms build/app.js"
   },
   "keywords": [
     "firebase",

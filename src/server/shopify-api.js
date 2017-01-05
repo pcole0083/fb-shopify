@@ -14,16 +14,18 @@ const shopify = new Shopify({
 export default shopify;
 
 /**
- * User
+ * Store
  */
 
-export const getCurrentUser = (callback) => {
+export const getStore = (callback) => {
 	if(!callback){
 		callback = noop;
 	}
 
-	return shopify.user.current()
-		.then(user => callback(user))
+	return shopify.shop.get({
+			fields: ['id', 'name', 'country', 'plan_name', 'myshopify_domain', 'force_ssl']
+		})
+		.then(store => callback(store))
 		.catch(err => {
 			logError('shopify', err);
 		});
