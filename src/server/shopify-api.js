@@ -1,6 +1,10 @@
 import Shopify from 'shopify-api-node';
 import logError from './log-error.js';
 
+const noop = function(data){
+	return data;
+};
+
 const shopify = new Shopify({
   shopName: 'pixafly',
   apiKey: '3ed6e3ec6eff83ab71bb9750ca18467d',
@@ -14,11 +18,15 @@ export default shopify;
  */
 
 export const getCurrentUser = (callback) => {
+	if(!callback){
+		callback = noop;
+	}
+
 	return shopify.user.current()
-	.then(user => callback(user))
-	.catch(err => {
-		logError('shopify', err);
-	});
+		.then(user => callback(user))
+		.catch(err => {
+			logError('shopify', err);
+		});
 }
 
 /**
@@ -30,31 +38,39 @@ export const getCurrentUser = (callback) => {
  */
 
 export const getCollectionById = (collection_id, number, fields, callback) => {
+	if(!callback){
+		callback = noop;
+	}
+
 	let defaultFields = ['id', 'title', 'products_count', 'collects'];
 
 	return shopify.customCollection.get(collection_id, {
-		'limit': number || 10,
-		'fields': fields || defaultFields
-	})
-	.then(collection => callback(collection))
-	.catch(err => {
-		logError('shopify', err);
-	});
+			'limit': number || 10,
+			'fields': fields || defaultFields
+		})
+		.then(collection => callback(collection))
+		.catch(err => {
+			logError('shopify', err);
+		});
 }
 
 export const getCollectionByName = (collection_name, fields, callback) => {
+	if(!callback){
+		callback = noop;
+	}
+
 	let defaultFields = ['id', 'title', 'products_count'];
 
 	return shopify.customCollection.list({
-		'limit': 1,
-		'title': collection_name,
-		'fields': fields || defaultFields
-	})
-	.then(collection => callback(collection))
-	.catch(err => {
-		logError('shopify', err);
-		callback({'error': 'Collection Name '+collection_name+' not found.'});
-	});
+			'limit': 1,
+			'title': collection_name,
+			'fields': fields || defaultFields
+		})
+		.then(collection => callback(collection))
+		.catch(err => {
+			logError('shopify', err);
+			callback({'error': 'Collection Name '+collection_name+' not found.'});
+		});
 }
 
 /**
@@ -62,17 +78,25 @@ export const getCollectionByName = (collection_name, fields, callback) => {
  */
 
 export const setNewCollectionName = (collection_name, callback) => {
-	shopify.customCollection.create({
-		"title": collection_name
-	})
-	.then(collection => callback(collection))
-	.catch(err => {
-		logError('shopify', err);
-		callback({'error': err});
-	});
+	if(!callback){
+		callback = noop;
+	}
+
+	return shopify.customCollection.create({
+			"title": collection_name
+		})
+		.then(collection => callback(collection))
+		.catch(err => {
+			logError('shopify', err);
+			callback({'error': err});
+		});
 }
 
 export const addProductToCollection = (collection_id, product_id, callback) => {
+	if(!callback){
+		callback = noop;
+	}
+
 	var collectAlreadyExits = false;
 	collection_id = Number(collection_id);
 	product_id = Number(product_id);
@@ -80,61 +104,73 @@ export const addProductToCollection = (collection_id, product_id, callback) => {
 	 * Collect link products and custom collections
 	 * There is 1 collect for each product->customCollection relationship
 	 */
-	shopify.collect.list({
-		'product_id': product_id,
-		'fields': ['id', 'collection_id', 'product_id']
-	})
-	.then(collects => {
-		//console.log(collects);
-		let collectKey = Object.keys(collects).find((key) => {
-			let clt = collects[key];
-			if(clt.collection_id === collection_id){
-				collectAlreadyExits = true;
-				return key;
-			}
-			return false;
-		});
-
-		let collect = collects[collectKey];
-
-		if(!collectAlreadyExits){
-			shopify.collect.create({
-				'product_id': product_id,
-				'collection_id': collection_id
-			})
-			.then(collect => callback(collect))
-			.catch(err => {
-				logError('shopify', err);
-				callback({'error': err});
+	return shopify.collect.list({
+			'product_id': product_id,
+			'fields': ['id', 'collection_id', 'product_id']
+		})
+		.then(collects => {
+			//console.log(collects);
+			let collectKey = Object.keys(collects).find((key) => {
+				let clt = collects[key];
+				if(clt.collection_id === collection_id){
+					collectAlreadyExits = true;
+					return key;
+				}
+				return false;
 			});
-		}
-		else {
-			callback(collect);
-		}
-	})
-	.catch(err => {
-		logError('shopify', err);
-		callback({'error': err});
-	});
+
+			let collect = collects[collectKey];
+
+			if(!collectAlreadyExits){
+				shopify.collect.create({
+					'product_id': product_id,
+					'collection_id': collection_id
+				})
+				.then(collect => callback(collect))
+				.catch(err => {
+					logError('shopify', err);
+					callback({'error': err});
+				});
+			}
+			else {
+				callback(collect);
+			}
+		})
+		.catch(err => {
+			logError('shopify', err);
+			callback({'error': err});
+		});
 }
 
 /**
  * Products
  */
 
+export const getProduct = (product_id, callback) => {
+	return shopify.product.get(product_id)
+		.then(product => callback(product))
+		.catch(err => {
+			logError('shopify', err);
+			callback({'error': err});
+		});
+}
+
 export const getProductsCollection = (collection_id, number, fields, callback) => {
 	let defaultFields = ['id'];
+	if(!callback){
+		callback = noop;
+	}
 
-	shopify.product.list({
-		'collection_id': collection_id,
-		'limit': number || 10,
-		'fields': fields || defaultFields
-	})
-	.then(list => callback(list))
-	.catch(err => {
-		logError('shopify', err);
-		callback({'error': err});
-	});
+	return shopify.product.list({
+			'collection_id': collection_id,
+			'limit': number || 10,
+			'fields': fields || defaultFields
+		})
+		.then(list => callback(list))
+		.catch(err => {
+			logError('shopify', err);
+			callback({'error': err});
+		});
 }
 
 /**
@@ -142,27 +178,31 @@ export const getProductsCollection = (collection_id, number, fields, callback) =
  */
 
 export const setProduct = (product_options, collectionId, callback) => {
-	shopify.product.create(product_options)
-	.then(product => {
-		if(!!collectionId){
-			shopify.collect.create({
-				'product_id': product.id,
-				'collection_id': collectionId
-			})
-			.then(collect => callback(product))
-			.catch(err => {
-				logError('shopify', err);
-				callback({'error': err});
-			})
-		}
-		else {
-			callback(product);
-		}
-	})
-	.catch(err => {
-		logError('shopify', err);
-		callback({'error': err});
-	});
+	if(!callback){
+		callback = noop;
+	}
+
+	return shopify.product.create(product_options)
+		.then(product => {
+			if(!!collectionId){
+				shopify.collect.create({
+					'product_id': product.id,
+					'collection_id': collectionId
+				})
+				.then(collect => callback(product))
+				.catch(err => {
+					logError('shopify', err);
+					callback({'error': err});
+				})
+			}
+			else {
+				callback(product);
+			}
+		})
+		.catch(err => {
+			logError('shopify', err);
+			callback({'error': err});
+		});
 
 }
 

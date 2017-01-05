@@ -34,27 +34,37 @@ export const listen = (ref, listenType, eventName, callback) => {
 	return ref[listenType](eventName, callback);
 }
 
-export const addData = (path, data) => {
+export const addData = (path, data, callback) => {
 	let ref = getRef(path);
 	let exists = false;
 
 	ref.orderByChild('id').equalTo(data.id).once('value')
 		.then((snapshot) => {
-			let dataPoints = snapshot.exportVal();
+			let dataPoints = snapshot.exportVal(),
+				returnData = dataPoints;
 
 			if(!!dataPoints){
-				Object.keys(dataPoints).forEach((key) => {
+				Object.keys(dataPoints).filter(key => {
 					let dataPt = dataPoints[key];
-					console.log(dataPt.id === data.id);
-					if(dataPt.id === data.id){
-						let newRef = getRef(path+'/'+key);
-						newRef.set(data);
-						exists = true;
+					if(~~dataPt.id === ~~data.id){
+						return key;
 					}
+					else{
+						return false;
+					}
+				}).forEach((key) => {
+					let dataNew = Object.assign(dataPoints[key], data);
+					let newRef = getRef(path+'/'+key);
+					newRef.set(dataNew);
+					returnData = data;
 				});
 			}
 			if(!exists){
 				ref.push(data);
+			}
+
+			if(!!callback){
+				callback(returnData);
 			}
 		});
 

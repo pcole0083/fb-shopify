@@ -40,9 +40,7 @@ configsRouter
 	.route('/firebase')
 	.get((request, response) => {
 		if(!!apiCreds.apiKey){
-			// FBAPI
-			// 	.initializeApp(apiCreds);
-			return response.status(200).json(apiCreds);
+			return response.status(200).json({'success': 'API creds are set.'});
 		}
 		return response.status(200).json({"error": "Firebase API not set!"});
 	})
@@ -62,11 +60,11 @@ configsRouter
 				child.exec(cmd, (error, stdout, stderr) => {
 				  return console.log(stdout);
 				});
-				response.status(201).json(apiCreds);
+				response.status(201).json({'success': 'API creds written to file.'});
 			});
 		}
 		else {
-			response.status(200).json([{'error': 'ApiKey, authDomain, and databaseURL are all required.'}]);
+			response.status(200).json({'error': 'ApiKey, authDomain, and databaseURL are all required.'});
 		}
 	});
 

@@ -2,7 +2,7 @@ import $ from 'jquery';
 import * as FBAPI from '../public/firebase-api.js';
 //import fetchData from './fetch-data.js';
 
-var getFirebaseCreds = (function(){
+var checkFirebaseCreds = (function(){
 	$.ajax({
 		url: './configs/firebase',
 		type: 'GET',
@@ -12,7 +12,6 @@ var getFirebaseCreds = (function(){
 			document.querySelector('#setupFirebase').classList.remove('hidden');
 		}
 		else {
-			console.log(configObj);
 			getAllCollectionOptions();
 			document.querySelector('#setupComplete').classList.remove('hidden');
 		}
@@ -45,7 +44,7 @@ function getCollectionProducts(collection_id){
 			});
 
 			var productTitles = !!products.length ? products.map((product) => {
-				return '<li>'+product.title+'</li>';
+				return '<li>'+product.title+' <button class="btn btn-info btn-sm update-data" data-id="'+product.id+'"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></li>';
 			}) : ['<li>No products found for this collection.</li>'];
 
 			var notInCollection = !!not_in.length ? not_in.map((product) => {
@@ -175,16 +174,6 @@ function createNewCollection(e){
 		select.innerHTML =  select.innerHTML + newOption;
 		select.selectedIndex = (select.children.length - 1);
 	});
-
-	/*fetchData.set({
-		url: 'http://pcoleman-mb.internal.pixafy.com:3030/collections',
-		body: json
-	}, function(promise){
-		var cast = Promise.resolve(promise);
-        cast.then(function(data){
-            console.log(data);
-        });
-	});*/
 }
 
 var productForm = document.querySelector('#newProduct');
@@ -245,6 +234,32 @@ function changeCollection(e) {
 			getCollectionProducts(json['collection_id']);
 		}
 	});
+}
+
+var listWrapper = document.querySelector('#dataDump');
+listWrapper.addEventListener('click', updateProduct);
+function updateProduct(e){
+	e.preventDefault();
+	var target = e.target,
+		product_id = target.classList.contains('update-data') ? Number(target.getAttribute('data-id')): 0;
+
+	if(!!product_id){
+		$.ajax({
+			url: './products/update',
+			type: 'POST',
+			dataType: 'json',
+			data: {product_id: product_id}
+		}).then( (returnedJson) => {
+			if(returnedJson.error){
+				return console.error(returnedJson.error);
+			}
+
+			let product = returnedJson[1];
+			if(!!product){
+				getCollectionProducts(document.querySelector('#collectionName').value);
+			}
+		});
+	}
 }
 
 

@@ -80,6 +80,20 @@ productsRouter
 	});
 
 productsRouter
+	.route('/update')
+	.post(urlencode, (request, response) => {
+		let productId = request.body.product_id;
+		//get product dat from Shopify
+		SHAPI
+			.getProduct(productId, (product) => {
+				FBAPI
+					.addData('shopify/products', product, (product_data) => {
+						return response.status(200).json([{'updated': product.title}, product_data]);
+					});
+			});
+	});
+
+productsRouter
 	.route('/new')
 	.post(urlencode, (request, response) => {
 		//console.log(request.body);
