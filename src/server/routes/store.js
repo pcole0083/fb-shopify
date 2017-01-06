@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import * as FBAPI from '../../public/firebase-api.js';
-import * as SHAPI from '../shopify-api.js';
+import SHAPI from '../shopify-api.js';
 
 const storeRouter = express.Router();
 const urlencode = bodyParser.urlencoded({ extended: false });

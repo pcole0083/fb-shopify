@@ -20,15 +20,15 @@ var checkFirebaseCreds = (function(){
 
 var getStoreInfo = (function(){
 	$.ajax({
-		url: './store',
+		url: './auth',
 		type: 'GET',
 		dataType: 'json',
-	}).then(storeData => {
-		if(!!storeData.error){
+	}).then(jsonData => {
+		if(!!jsonData.error){
 			document.querySelector('#setupFirebase').classList.remove('hidden');
 		}
 		else {
-			console.log(storeData);
+			console.log(jsonData);
 		}
 	});
 }());
