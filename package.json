@@ -22,7 +22,6 @@
     "express": "^4.14.0",
     "firebase": "^3.6.4",
     "jquery": "^3.1.1",
-    "mongoose": "^4.7.6",
     "setimmediate": "^1.0.5",
     "shopify-api-node": "^2.2.0",
     "shopify-token": "^3.0.0"

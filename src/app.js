@@ -1,5 +1,5 @@
 import express from 'express';
-//import mongoose from 'mongoose';
+
 import config from './config.js';
 import collectionsRouter from './server/routes/collections.js';
 import productsRouter from './server/routes/products.js';
@@ -8,9 +8,6 @@ import storeRouter from './server/routes/store.js';
 
 const env = process.env.NODE_ENV || 'development';
 const env_config = config[env];
-
-// connect to Mongo when the app initializes
-//mongoose.connect(env_config.db);
 
 const app = express();
 
