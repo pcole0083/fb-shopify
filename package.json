@@ -4,6 +4,7 @@
   "description": "Firebase-Shopify",
   "main": "server.js",
   "scripts": {
+    "install": "if [ ! -d /build ]; then mkdir build && mkdir build/client && mkdir build/public && mkdir build/server && mkdir build/views fi",
     "test": "npm -v",
     "build:client": "browserify ./src/client/app.js -t [ babelify --presets es2015 ] -o build/client/all.js",
     "build:server": "babel ./src/app.js -o ./build/app.js && babel ./src/config.js -o ./build/config.js && babel ./src/server -d build/server && babel ./src/public -d build/public && cp index.html build/",
