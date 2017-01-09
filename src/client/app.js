@@ -3,35 +3,40 @@ import * as FBAPI from '../public/firebase-api.js';
 //import fetchData from './fetch-data.js';
 
 var checkFirebaseCreds = (function(){
+	var setupFirebase = document.querySelector('#setupFirebase'),
+		setupComplete = document.querySelector('#setupComplete');
+
 	$.ajax({
 		url: './configs/firebase',
 		type: 'GET',
 		dataType: 'json',
 	}).then(configObj => {
-		if(!!configObj.error){
-			document.querySelector('#setupFirebase').classList.remove('hidden');
+		if(!!configObj.error && !!setupFirebase){
+			setupFirebase.classList.remove('hidden');
 		}
 		else {
 			getAllCollectionOptions();
-			document.querySelector('#setupComplete').classList.remove('hidden');
+			if(!!setupComplete){
+				setupComplete.classList.remove('hidden');
+			}
 		}
 	});
 }());
 
-var getStoreInfo = (function(){
-	$.ajax({
-		url: './auth',
-		type: 'GET',
-		dataType: 'json',
-	}).then(jsonData => {
-		if(!!jsonData.error){
-			document.querySelector('#setupFirebase').classList.remove('hidden');
-		}
-		else {
-			console.log(jsonData);
-		}
-	});
-}());
+// var getStoreInfo = (function(){
+// 	$.ajax({
+// 		url: './auth',
+// 		type: 'GET',
+// 		dataType: 'json',
+// 	}).then(jsonData => {
+// 		if(!!jsonData.error){
+// 			document.querySelector('#setupFirebase').classList.remove('hidden');
+// 		}
+// 		else {
+// 			console.log(jsonData);
+// 		}
+// 	});
+// }());
 
 function getCollectionProducts(collection_id){
 	let ref = FBAPI.getRef('shopify/products');
@@ -133,7 +138,9 @@ var getAllCollectionOptions = function(){
 };
 
 var fbForm = document.querySelector('#firebaseConfig');
-fbForm.addEventListener('submit', submitConfig);
+if(!!fbForm){
+	fbForm.addEventListener('submit', submitConfig);
+}
 
 function submitConfig(e){
 	e.preventDefault();
@@ -162,7 +169,9 @@ function submitConfig(e){
 }
 
 var collectionForm = document.querySelector('#newCollection');
-collectionForm.addEventListener('submit', createNewCollection);
+if(!!collectionForm){
+	collectionForm.addEventListener('submit', createNewCollection);
+}
 
 function createNewCollection(e){
 	e.preventDefault();
@@ -192,7 +201,9 @@ function createNewCollection(e){
 }
 
 var productForm = document.querySelector('#newProduct');
-productForm.addEventListener('submit', createNewProduct);
+if(!!productForm){
+	productForm.addEventListener('submit', createNewProduct);
+}
 
 function createNewProduct(e){
 	e.preventDefault();
@@ -221,8 +232,10 @@ function createNewProduct(e){
 	});
 }
 
-var productToCollection = document.querySelector('#addProduct')
-productToCollection.addEventListener('submit', changeCollection);
+var productToCollection = document.querySelector('#addProduct');
+if(!!productToCollection){
+	productToCollection.addEventListener('submit', changeCollection);
+}
 
 function changeCollection(e) {
 	e.preventDefault();
@@ -252,7 +265,10 @@ function changeCollection(e) {
 }
 
 var listWrapper = document.querySelector('#dataDump');
-listWrapper.addEventListener('click', updateProduct);
+if(!!listWrapper){
+	listWrapper.addEventListener('click', updateProduct);
+}
+
 function updateProduct(e){
 	e.preventDefault();
 	var target = e.target,

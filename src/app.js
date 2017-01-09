@@ -1,4 +1,5 @@
 import express from 'express';
+import session from 'express-session';
 
 import config from './config.js';
 import collectionsRouter from './server/routes/collections.js';
@@ -13,7 +14,29 @@ const env_config = config[env];
 const app = express();
 
 app
-	.use(express.static('./'))
+	.use(express.static(__dirname + '/views'))
+	.use(express.static(__dirname + '/client'))
+
+	.use(session({
+		secret: env_config.session_secret,
+  		resave: false,
+  		saveUninitialized: true
+	}))
+
+	.get('/',function(req,res){
+		if(!!request.session && !!request.session.shopify){
+			return res.sendFile('index.html');
+		}
+		else {
+			return response.redirect('/auth');
+			//It will find and locate index.html from views
+		}
+	})
+
+	.get('/build/client/:name',function(req,res){
+		res.sendFile(req.params.name+'.js', {root: __dirname + '/client'} );
+		//load the JS file based on the name param.
+	})
 
 	.use('/configs', configsRouter)
 

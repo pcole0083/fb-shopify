@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title> FB-SP </title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            .update-data .glyphicon-refresh { pointer-events: none; }
+        </style>
+    </head>
+    <body>
+        <div id='app' class='container-fluid'>
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>Firebase + Shopify Node Sever</h1>
+                </div>
+            </div>
+            <div id="setupFirebase" class="row">
+                <div class="col-xs-12">
+                    <h2>Please enter your store name</h2>
+                    <form action="/auth" method="post">
+                        <div class="formGroup">
+                            <label for="databaseURL">Store Name</label>
+                            <input type="text" name="store_name" class="form-control" id="storeName" placeholder="Store Name">
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src='./build/client/all'></script>
+    </body>
+</html>

@@ -7,7 +7,8 @@
     "test": "npm -v",
     "build:client": "browserify ./src/client/app.js -t [ babelify --presets es2015 ] -o build/client/all.js",
     "build:server": "babel ./src/app.js -o ./build/app.js && babel ./src/config.js -o ./build/config.js && babel ./src/server -d build/server && babel ./src/public -d build/public && cp index.html build/",
-    "build": "npm run build:client && npm run build:server",
+    "build:views": "rm -rf ./build/views && cp -R ./src/views ./build/views",
+    "build": "npm run build:views && npm run build:client && npm run build:server",
     "watch": "watch \"npm run build\" ./src",
     "start": "nodemon --delay 3000ms build/app.js"
   },
@@ -20,6 +21,7 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "express-session": "^1.14.2",
     "firebase": "^3.6.4",
     "jquery": "^3.1.1",
     "setimmediate": "^1.0.5",

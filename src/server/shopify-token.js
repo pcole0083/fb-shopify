@@ -14,16 +14,12 @@ const getShopifyToken = function(){
 	return shopifyToken;
 };
 
-const getAuthUrl = function(store_name, scope){
+const getAuthUrl = function(store_name){
 	if(!store_name){
 		return {'error': 'No store name provided.'};
 	}
 
-	if(!scope){
-		scope = ['read_products', 'write_products', 'read_script_tags', 'write_script_tags'];
-	}
-
-	return shopifyToken.generateAuthUrl(store_name, scope);
+	return shopifyToken.generateAuthUrl(store_name);
 }
 
 const verifyQuery = function(query){
@@ -34,7 +30,7 @@ const verifyQuery = function(query){
 }
 
 const getAccessToken = function(hostname, auth_code, callback){
-	if(!hostname || !code || !callback){
+	if(!hostname || !auth_code || !callback){
 		return {'error': 'Hostname, auth code, and callback are all required params!'};
 	}
 	shopifyToken.getAccessToken(hostname, auth_code)
@@ -44,17 +40,17 @@ const getAccessToken = function(hostname, auth_code, callback){
 	  callback(token);
 
 	}).catch((err) => {
-		logError('shopify', err);
+		logError('shopify', {'getAccessToken': err });
 		callback({'error': err});
 	});
 }
 
-const ShAuth = {
+const SHAUTH = {
 	getShopifyToken: getShopifyToken,
 	getAuthUrl: getAuthUrl,
 	verifyQuery: verifyQuery,
 	getAccessToken: getAccessToken
 };
 
-export default ShAuth;
+export default SHAUTH;
 

@@ -46,7 +46,7 @@ SHAPI.prototype = (function(){
 			})
 			.then(store => callback(store))
 			.catch(err => {
-				logError('shopify', err);
+				logError('shopify', {'getStore': err });
 			});
 	};
 
