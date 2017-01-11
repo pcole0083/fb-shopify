@@ -5,22 +5,23 @@ import * as FBAPI from '../public/firebase-api.js';
 var checkFirebaseCreds = (function(){
 	var setupFirebase = document.querySelector('#setupFirebase'),
 		setupComplete = document.querySelector('#setupComplete');
-
-	$.ajax({
-		url: './configs/firebase',
-		type: 'GET',
-		dataType: 'json',
-	}).then(configObj => {
-		if(!!configObj.error && !!setupFirebase){
-			setupFirebase.classList.remove('hidden');
-		}
-		else {
-			getAllCollectionOptions();
-			if(!!setupComplete){
-				setupComplete.classList.remove('hidden');
+	if(!!setupFirebase || !!setupComplete){
+		$.ajax({
+			url: './configs/firebase',
+			type: 'GET',
+			dataType: 'json',
+		}).then(configObj => {
+			if(!!configObj.error && !!setupFirebase){
+				setupFirebase.classList.remove('hidden');
 			}
-		}
-	});
+			else {
+				getAllCollectionOptions();
+				if(!!setupComplete){
+					setupComplete.classList.remove('hidden');
+				}
+			}
+		});
+	}
 }());
 
 // var getStoreInfo = (function(){
@@ -188,8 +189,9 @@ function createNewCollection(e){
 		dataType: 'json',
 		data: json
 	}).then( (returnedJson) => {
-		if(returnedJson.error){
-			return console.error(returnedJson.error);
+		if(!!returnedJson.error){
+			console.error(returnedJson.error);
+			return window.location.href = '/auth';
 		}
 
 		let collection = returnedJson[1];

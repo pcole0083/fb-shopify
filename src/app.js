@@ -13,14 +13,14 @@ const env_config = config[env];
 
 const app = express();
 
-var RedisStore = require('connect-redis')(session);
+//var RedisStore = require('connect-redis')(session);
 
 app
 	.use(express.static(__dirname + '/views'))
 	.use(express.static(__dirname + '/client'))
 
 	.use(session({
-		store: new RedisStore(),
+		//store: new RedisStore(),
 		secret: env_config.session_secret,
   		resave: false,
   		saveUninitialized: true

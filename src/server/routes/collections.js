@@ -37,11 +37,14 @@ collectionsRouter
 			.then(collectionCallback(null, response));
 	})
 	.post(urlencode, (request, response) => {
+		if(!request.session.shopify){
+			return response.status(200).json({'error': 'Shopify not yet instantiated.'});
+		}
 
 		let collectionName = request.body.collection_name;
 
 		SHAPI.
-			getCollectionByName(collectionName, null, (collections) => {
+			getCollectionByName(SHAPI.getInstance(request), collectionName, null, (collections) => {
 				let collection = !!collections.length ? collections[0] : {'error': 'Collection '+collectionName+' not found.'};
 				response.status(200).json([{'search': collectionName}, collection]);
 				// if(!!collection && !collection.error){
@@ -68,6 +71,9 @@ collectionsRouter
 collectionsRouter
 	.route('/new')
 	.post(urlencode, (request, response) => {
+		if(!request.session.shopify){
+			return response.status(200).json({'error': 'Shopify not yet instantiated.'});
+		}
 		//console.log(request.body);
 		let collectionName = request.body.collection_name_new;
 
@@ -76,7 +82,7 @@ collectionsRouter
 		}
 
 		SHAPI.
-			setNewCollectionName(collectionName, (collection) => {
+			setNewCollectionName(SHAPI.getInstance(request), collectionName, (collection) => {
 				let status = 201;
 				collection = !!collection ? collection : {'error': 'Error something went wrong and we cannot verify if '+collectionName+' was created.'};
 				
@@ -98,6 +104,10 @@ collectionsRouter
 collectionsRouter
 	.route('/add')
 	.post(urlencode, (request, response) => {
+		if(!request.session.shopify){
+			return response.status(200).json({'error': 'Shopify not yet instantiated.'});
+		}
+
 		let collectionId = request.body.collection_id;
 		let productId = request.body.product_id;
 
@@ -106,7 +116,7 @@ collectionsRouter
 		}
 
 		SHAPI.
-			addProductToCollection(collectionId, productId, (collect) => {
+			addProductToCollection(SHAPI.getInstance(request), collectionId, productId, (collect) => {
 				let status = 200;
 				collect = !!collect ? collect : {'error': 'Error something went wrong and we cannot verify if '+productId+' was moved to '+collectionId+'.'};
 				//console.log(collect);

@@ -85,7 +85,7 @@ productsRouter
 		let productId = request.body.product_id;
 		//get product dat from Shopify
 		SHAPI
-			.getProduct(productId, (product) => {
+			.getProduct(SHAPI.getInstance(request), productId, (product) => {
 				FBAPI
 					.addData('shopify/products', product, (product_data) => {
 						return response.status(200).json([{'updated': product.title}, product_data]);
@@ -117,7 +117,7 @@ productsRouter
 		};
 
 		SHAPI.
-			setProduct(productOptions, collectionId, (product) => {
+			setProduct(SHAPI.getInstance(request), productOptions, collectionId, (product) => {
 				let status = 201;
 				product = !!product ? product : {'error': 'Error something went wrong and we cannot verify if '+productName+' was created.'};
 				
