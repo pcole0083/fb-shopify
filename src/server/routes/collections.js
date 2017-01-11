@@ -5,8 +5,15 @@ import SHAPI from '../shopify-api.js';
 
 const collectionsRouter = express.Router();
 const urlencode = bodyParser.urlencoded({ extended: false });
-const fbCollections = FBAPI.getRef('shopify/collections');
+//const fbCollections = FBAPI.getRef('shopify/collections');
 const fbProducts = FBAPI.getRef('shopify/products');
+
+const creatRefUrl = function(request, extend){
+	if(!!request.session.authData.shopName && !!extend){
+		return 'shopify/'+request.session.authData.shopName+extend;
+	}
+	return null;
+};
 
 const collectionCallback = function(name, response) {
 	name = !!name ? name.toLowerCase() : null;
@@ -25,20 +32,42 @@ const collectionCallback = function(name, response) {
 			return collection;
 		});
 
-		return response.json(filtered);
+		return response.status(200).json(filtered);
 	}
 };
 
 collectionsRouter
 	.route('/')
+	.all( (request, response, next) => {
+		if(!request.session.authData){
+			response.status(200).json({'error': 'Session not yet established.'});
+		}
+		else{
+			let fbCollections = FBAPI.getRef(creatRefUrl(request, '/collections'));
+			request.fbCollections = fbCollections;
+			next();
+		}
+	})
 	.get( (request, response) => {
 		FBAPI
-			.listen(fbCollections, 'once', 'value')
-			.then(collectionCallback(null, response));
+			.getData(creatRefUrl(request, '/collections'))
+			.then((snapshot) => {
+				if( snapshot.exists() ){
+					var collections = [];
+					snapshot.forEach( (collectionSnap) => {
+						collections.push(collectionSnap.val());
+					});
+
+					response.status(200).json(collections);
+				}
+				else {
+					response.status(200).json({'error': 'No collections exist.'});
+				}
+			});
 	})
 	.post(urlencode, (request, response) => {
 		if(!request.session.authData){
-			return response.status(200).json({'error': 'Shopify not yet instantiated.'});
+			return response.status(200).json({'error': 'App not yet instantiated.'});
 		}
 
 		let collectionName = request.body.collection_name;
@@ -47,21 +76,23 @@ collectionsRouter
 			getCollectionByName(SHAPI.getInstance(request), collectionName, null, (collections) => {
 				let collection = !!collections.length ? collections[0] : {'error': 'Collection '+collectionName+' not found.'};
 				response.status(200).json([{'search': collectionName}, collection]);
-				// if(!!collection && !collection.error){
-				// 	FBAPI.addData('shopify/collections', collection);
-				// }
 			});
 	});
 
 collectionsRouter
 	.route('/:name')
 	.all( (request, response, next) => {
+		if(!request.session.authData){
+			return response.status(200).json({'error': 'Session not yet established.'});
+		}
+
 		request.collectionName = decodeURIComponent(request.params.name);
 		next();
 	})
 
 	.get( (request, response) => {
 		var name = request.collectionName;
+		let fbCollections = FBAPI.getRef(creatRefUrl(request, '/collections'));
 
 		FBAPI
 			.listen(fbCollections, 'once', 'value')
@@ -80,6 +111,8 @@ collectionsRouter
 		if(!collectionName){
 			return response.status(200).json([{'new': collectionName}, request.body]);
 		}
+
+		let fbCollections = FBAPI.getRef(creatRefUrl(request, '/collections'));
 
 		SHAPI.
 			setNewCollectionName(SHAPI.getInstance(request), collectionName, (collection) => {
@@ -115,6 +148,8 @@ collectionsRouter
 			return response.status(200).json([{'id': collectionId}, request.body]);
 		}
 
+		let fbProducts = creatRefUrl(request, '/products')
+
 		SHAPI.
 			addProductToCollection(SHAPI.getInstance(request), collectionId, productId, (collect) => {
 				let status = 200;
@@ -126,7 +161,7 @@ collectionsRouter
 				}
 
 				FBAPI
-					.addData('shopify/collection', {
+					.addData(creatRefUrl(request, '/collections'), {
 						'id': collectionId,
 						'products_count': collect.position || 1
 					});
@@ -134,22 +169,20 @@ collectionsRouter
 				FBAPI
 					.listen(fbProducts, 'once', 'value')
 					.then(function(snapshot){
-						let json = snapshot.exportVal();
-						let productKey = Object.keys(json).find((key) =>{
-							let product = json[key];
-							if(~~product.id === ~~productId){
-								return key;
-							}
-							return false;
-						});
-						
-						//if product was made in Shopify Admin, need to add it to FB now
-						if(!!productKey){
-							let np_ref = FBAPI.getRef('shopify/products/'+productKey);
-							np_ref.update({'collection_id': collectionId});
-						}
+						if( !!snapshot.exists() ){
+							snapshot.forEach( (productSnap) => {
+								let product = productSnap.val();
+								if(~~product.id === ~~productId){
+									productSnap.update({'collection_id': collectionId});
+									return truel
+								}
+							});
 
-						response.status(status).json([{'id': collectionId}, collect]);
+							response.status(status).json([{'id': collectionId}, collect]);
+						}
+						else {
+							response.status(status).json([{'id': collectionId}, {'error': 'Product not found.'}]);
+						}						
 					});
 			});
 

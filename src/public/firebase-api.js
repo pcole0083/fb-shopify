@@ -34,6 +34,15 @@ export const listen = (ref, listenType, eventName, callback) => {
 	return ref[listenType](eventName, callback);
 }
 
+export const getData = (path, callback) => {
+	let ref = getRef(path);
+	return ref.orderByKey().once('value')
+		.then(callback)
+		.catch(err => {
+			console.log(err);
+		});
+}
+
 export const addData = (path, data, callback) => {
 	let ref = getRef(path);
 	let exists = false;

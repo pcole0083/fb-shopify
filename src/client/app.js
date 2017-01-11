@@ -40,7 +40,7 @@ var checkFirebaseCreds = (function(){
 // }());
 
 function getCollectionProducts(collection_id){
-	let ref = FBAPI.getRef('shopify/products');
+	let ref = FBAPI.getRef('shopify/pixafly/products');
 	FBAPI
 		.listen(ref, 'once', 'value')
 		.then(function(snapshot){
@@ -128,6 +128,9 @@ var getAllCollectionOptions = function(){
 		});
 
 		select.innerHTML = select.innerHTML + options.join('');
+	})
+	.fail(err => {
+		console.error(err);
 	});
 
 	select.addEventListener('change', function(e){

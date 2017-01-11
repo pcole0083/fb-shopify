@@ -34,7 +34,7 @@ app
 			return res.sendFile('index.html');
 		}
 		else {
-			return response.redirect('/auth');
+			return response.redirect(302, '/auth');
 			//It will find and locate index.html from views
 		}
 	})

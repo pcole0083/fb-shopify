@@ -38,7 +38,7 @@ const getStore = (shopify, callback) => {
 	}
 
 	return shopify.shop.get({
-			fields: ['id', 'name', 'country', 'plan_name', 'myshopify_domain', 'force_ssl']
+			fields: ['id', 'name', 'email', 'country', 'currency', 'plan_name', 'myshopify_domain', 'force_ssl']
 		})
 		.then(store => callback(store))
 		.catch(err => {
@@ -217,10 +217,40 @@ const setProduct = (shopify, product_options, collectionId, callback) => {
 			}
 		})
 		.catch(err => {
-			logError('shopify', err);
+			logError('shopify', {'setProduct': err});
 			callback({'error': err});
 		});
+};
 
+/**
+ * Recurring Billing Charge
+ */
+
+const getChargeById = (shopify, id) => {
+	return shopify.recurringApplicationCharge.get(id, ['status'])
+		.then(callback)
+		.catch(err => {
+			logError('shopify', {'addRecurringCharge': err});
+			callback({'error': err});
+		});
+};
+
+const addRecurringCharge = (shopify, options, callback) => {
+	return shopify.recurringApplicationCharge.create(options)
+		.then(callback)
+		.catch(err => {
+			logError('shopify', {'addRecurringCharge': err});
+			callback({'error': err});
+		});
+};
+
+const startRecurringCharge = (shopify, id, params, callback) => {
+	return shopify.recurringApplicationCharge.activate(id, params)
+		.then(callback)
+		.catch(err => {
+			logError('shopify', {'startRecurringCharge': err});
+			callback({'error': err});
+		});
 };
 
 var SHAPI = (function(){

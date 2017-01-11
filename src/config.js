@@ -14,6 +14,12 @@ const config = {
 			redirectUri: baseUrls['development']+'auth/grant',
 			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
 			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags']
+		},
+		billing: {
+			'return_url': baseUrls['development']+'billing/complete',
+			'price': '15.0',
+			'trial_days': 7,
+			'test': true
 		}
     },
 
@@ -26,6 +32,12 @@ const config = {
 			redirectUri: baseUrls['staging']+'auth/grant',
 			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
 			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags']
+		},
+		billing: {
+			'return_url': baseUrls['staging']+'billing/complete',
+			'price': '15.0',
+			'trial_days': 7,
+			'test': true
 		}
     },
 
@@ -38,6 +50,12 @@ const config = {
 			redirectUri: baseUrls['production']+'auth/grant',
 			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
 			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags']
+		},
+		billing: {
+			'return_url': baseUrls['production']+'billing/complete',
+			'price': '15.0',
+			'trial_days': 7,
+			'test': true
 		}
     }
 };

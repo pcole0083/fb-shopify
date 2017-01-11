@@ -38,7 +38,7 @@ var setShopifySession = function(request, response) {
 	request.session.shopify = shopify;
 
 	response.clearCookie('shopname');
-	response.cookie('shopname', authData.shopName, {httpOnly: true}); //httpOnly - Flags the cookie to be accessible only by the web server.
+	response.cookie('shopname', authData.shopName); //httpOnly - Flags the cookie to be accessible only by the web server.
 	response.redirect('..');
 };
 
@@ -55,7 +55,7 @@ authRouter
 	})
 	.get(urlencode, (request, response) => {
 		let store_name = !!request.cookies && !!request.cookies.shopname ? request.cookies.shopname : null;
-		console.log(store_name);
+		//console.log(store_name);
 		if(!!store_name){
 			let authUrl = SHAUTH.getAuthUrl(store_name);
 			//console.log(authUrl);
