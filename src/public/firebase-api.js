@@ -43,25 +43,22 @@ export const addData = (path, data, callback) => {
 			let dataPoints = snapshot.exportVal(),
 				returnData = dataPoints;
 
-			if(!!dataPoints){
-				Object.keys(dataPoints).filter(key => {
-					let dataPt = dataPoints[key];
-					if(~~dataPt.id === ~~data.id){
-						return key;
-					}
-					else{
-						return false;
-					}
-				}).forEach((key) => {
-					let dataNew = Object.assign(dataPoints[key], data);
-					let newRef = getRef(path+'/'+key);
-					newRef.set(dataNew);
-					returnData = data;
+			if(!!snapshot.exists()){
+				snapshot.forEach((childSnapshot) => {
+					let key = childSnapshot.key,
+						dataPt = childSnapshot.val();
+
+					let dataNew = Object.assign(dataPt, data);
+					//let newRef = getRef(path+'/'+key);
+					childSnapshot.update(dataNew);
+					returnData = dataNew;
+					return true;
 				});
 			}
-			if(!exists){
-				ref.push(data);
+			else {
+				ref.push(returnData);
 			}
+			
 
 			if(!!callback){
 				callback(returnData);

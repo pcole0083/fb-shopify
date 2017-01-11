@@ -22,6 +22,9 @@ const noop = function(data){
  *		}
  */
 const getInstance = (request) => {
+	if(!request.session || !request.session.authData){
+		return {'error': 'No session object found!'};
+	}
 	return new Shopify(request.session.authData);
 };
 
@@ -95,8 +98,6 @@ const setNewCollectionName = (shopify, collection_name, callback) => {
 	if(!callback){
 		callback = noop;
 	}
-
-	console.log(shopify.customCollection);
 
 	return shopify.customCollection.create({
 			"title": collection_name
