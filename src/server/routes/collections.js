@@ -37,7 +37,7 @@ collectionsRouter
 			.then(collectionCallback(null, response));
 	})
 	.post(urlencode, (request, response) => {
-		if(!request.session.shopify){
+		if(!request.session.authData){
 			return response.status(200).json({'error': 'Shopify not yet instantiated.'});
 		}
 
@@ -71,7 +71,7 @@ collectionsRouter
 collectionsRouter
 	.route('/new')
 	.post(urlencode, (request, response) => {
-		if(!request.session.shopify){
+		if(!request.session.authData){
 			return response.status(200).json({'error': 'Shopify not yet instantiated.'});
 		}
 		//console.log(request.body);
@@ -104,7 +104,7 @@ collectionsRouter
 collectionsRouter
 	.route('/add')
 	.post(urlencode, (request, response) => {
-		if(!request.session.shopify){
+		if(!request.session.authData){
 			return response.status(200).json({'error': 'Shopify not yet instantiated.'});
 		}
 

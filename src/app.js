@@ -30,7 +30,7 @@ app
 	.use(cookieParser())
 
 	.get('/',function(req,res){
-		if(!!request.session && !!request.session.shopify){
+		if(!!request.session && !!request.session.authData){
 			return res.sendFile('index.html');
 		}
 		else {

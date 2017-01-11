@@ -38,7 +38,7 @@ var setShopifySession = function(request, response) {
 	request.session.shopify = shopify;
 
 	response.clearCookie('shopname');
-	response.cookie('shopname', authData.shopName);
+	response.cookie('shopname', authData.shopName, {httpOnly: true}); //httpOnly - Flags the cookie to be accessible only by the web server.
 	response.redirect('..');
 };
 
