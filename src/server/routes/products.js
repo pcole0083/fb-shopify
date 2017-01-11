@@ -10,6 +10,14 @@ const urlencode = bodyParser.urlencoded({ extended: false });
 const fbCollections = FBAPI.getRef('shopify/collections');
 const fbProducts 	= FBAPI.getRef('shopify/products');
 
+const getProductById = function(request, response, next){
+	let productId = request.body.product_id;
+	//get product dat from Shopify
+	SHAPI
+		.getProduct(SHAPI.getInstance(request), productId, (product) => {
+			request.body.product = product;
+		}).then(next);
+};
 
 productsRouter
 	.route('/')
@@ -49,13 +57,13 @@ productsRouter
 					return response.send('Error getting the collection. Snaposhot is null.');
 				}
 
-				var col_id = Object.keys(json).map((key) => {
+				var col_id = json[Object.keys(json).find((key) => {
 					let collection = json[key];
 					if(collection.title.toLowerCase() !== collectionName.toLowerCase()){
 						return false;
 					}
-					return collection.id;
-				})[0];
+					return key;
+				})];
 
 				FBAPI
 					.listen(fbProducts, 'once', 'value')
@@ -81,15 +89,12 @@ productsRouter
 
 productsRouter
 	.route('/update')
-	.post(urlencode, (request, response) => {
-		let productId = request.body.product_id;
+	.post(urlencode, getProductById, (request, response) => {
+		let product = request.body.product;
 		//get product dat from Shopify
-		SHAPI
-			.getProduct(SHAPI.getInstance(request), productId, (product) => {
-				FBAPI
-					.addData('shopify/products', product, (product_data) => {
-						return response.status(200).json([{'updated': product.title}, product_data]);
-					});
+		FBAPI
+			.addData('shopify/products', product, (product_data) => {
+				return response.status(200).json([{'updated': product.title}, product_data]);
 			});
 	});
 

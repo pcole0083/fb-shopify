@@ -1,5 +1,6 @@
 import express from 'express';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 
 import config from './config.js';
 import collectionsRouter from './server/routes/collections.js';
@@ -25,6 +26,8 @@ app
   		resave: false,
   		saveUninitialized: true
 	}))
+
+	.use(cookieParser())
 
 	.get('/',function(req,res){
 		if(!!request.session && !!request.session.shopify){

@@ -37,7 +37,8 @@ var setShopifySession = function(request, response) {
 	request.session.authData = authData;
 	request.session.shopify = shopify;
 
-	console.log(request.session.authData);
+	response.clearCookie('shopname');
+	response.cookie('shopname', authData.shopName);
 	response.redirect('..');
 };
 
@@ -53,19 +54,18 @@ authRouter
 		}
 	})
 	.get(urlencode, (request, response) => {
-		// let store_name = !!request.headers && !!request.headers.referer ? request.headers.referer.match(/:\/\/(.[^/]+)/)[1] : null;
-		// if(!!store_name){
-		// 	response.redirect(307, {'store_name': store_name});
-		// }
-
-		response.sendFile('auth.html', { root: path.resolve(__dirname, '../../views')});
+		let store_name = !!request.cookies && !!request.cookies.shopname ? request.cookies.shopname : null;
+		console.log(store_name);
+		if(!!store_name){
+			let authUrl = SHAUTH.getAuthUrl(store_name);
+			//console.log(authUrl);
+			response.redirect(authUrl);
+		}
+		else {
+			response.sendFile('auth.html', { root: path.resolve(__dirname, '../../views')});
+		}
 	})
 	.post(urlencode, (request, response) => {
-		if(!!request.session && !!request.session.authData){
-			//need to check if auth rejected or expired.
-			return response.redirect('..');
-		}
-
 		let hostname = request.body.store_name;
 		//let hostname = !!referer ? referer.match(/:\/\/(.[^/]+)/)[1] : null;
 		//response.status(200).json({'hostname': hostname});
