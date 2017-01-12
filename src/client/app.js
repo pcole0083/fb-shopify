@@ -2,9 +2,17 @@ import $ from 'jquery';
 import * as FBAPI from '../public/firebase-api.js';
 //import fetchData from './fetch-data.js';
 
+var initialCookies = (function(){
+	var cookiesObj = {};
+	document.cookie.split(';').forEach(function(pair){
+		var keyVal = pair.trim().split('=');
+		cookiesObj[keyVal[0]] = keyVal[1];
+	});
+	return cookiesObj;
+}());
+
 var checkFirebaseCreds = (function(){
-	var setupFirebase = document.querySelector('#setupFirebase'),
-		setupComplete = document.querySelector('#setupComplete');
+	var setupFirebase = document.querySelector('#setupFirebase');
 	if(!!setupFirebase || !!setupComplete){
 		$.ajax({
 			url: './configs/firebase',
@@ -16,9 +24,6 @@ var checkFirebaseCreds = (function(){
 			}
 			else {
 				getAllCollectionOptions();
-				if(!!setupComplete){
-					setupComplete.classList.remove('hidden');
-				}
 			}
 		});
 	}
@@ -40,7 +45,11 @@ var checkFirebaseCreds = (function(){
 // }());
 
 function getCollectionProducts(collection_id){
-	let ref = FBAPI.getRef('shopify/pixafly/products');
+	if(!initialCookies || !initialCookies.shopname){
+		return console.log('Store name needs to be set first.');
+	}
+
+	let ref = FBAPI.getRef('shopify/'+initialCookies.shopname+'/products');
 	FBAPI
 		.listen(ref, 'once', 'value')
 		.then(function(snapshot){
@@ -111,6 +120,7 @@ function dataSplit(stringData){
 
 var getAllCollectionOptions = function(){
 	var select = document.querySelector('#collectionName'),
+		setupComplete = document.querySelector('#setupComplete'),
 		options = [];
 
 	if(!select){
@@ -118,16 +128,24 @@ var getAllCollectionOptions = function(){
 	}
 
 	$.ajax({
-		url: './collections',
+		url: './collections/',
 		type: 'GET',
 		dataType: 'json'
 	}).then( (response) => {
+		if(!!response.error){
+			console.log(response.error);
+			return window.location.replace('/auth');
+		}
 
 		options = response.map( (opt) => {
 			return '<option value="'+opt.id+'" data-product-count="'+opt.product_count+'">'+opt.title+'</option>';
 		});
 
 		select.innerHTML = select.innerHTML + options.join('');
+
+		if(!!setupComplete){
+			setupComplete.classList.remove('hidden');
+		}
 	})
 	.fail(err => {
 		console.error(err);
