@@ -118,14 +118,16 @@ function dataSplit(stringData){
 	});
 }
 
+var collectionChange = function(e){
+	var select = this,
+		collection_id = this.value;
+	getCollectionProducts(collection_id);
+};
+
 var getAllCollectionOptions = function(){
 	var select = document.querySelector('#collectionName'),
 		setupComplete = document.querySelector('#setupComplete'),
 		options = [];
-
-	if(!select){
-		return;
-	}
 
 	$.ajax({
 		url: './collections/',
@@ -137,11 +139,13 @@ var getAllCollectionOptions = function(){
 			return window.location.replace('/auth');
 		}
 
-		options = response.map( (opt) => {
-			return '<option value="'+opt.id+'" data-product-count="'+opt.product_count+'">'+opt.title+'</option>';
-		});
+		if(!!select){
+			options = response.map( (opt) => {
+				return '<option value="'+opt.id+'" data-product-count="'+opt.product_count+'">'+opt.title+'</option>';
+			});
 
-		select.innerHTML = select.innerHTML + options.join('');
+			select.innerHTML = select.innerHTML + options.join('');
+		}
 
 		if(!!setupComplete){
 			setupComplete.classList.remove('hidden');
@@ -151,11 +155,10 @@ var getAllCollectionOptions = function(){
 		console.error(err);
 	});
 
-	select.addEventListener('change', function(e){
-		var select = this,
-			collection_id = this.value;
-		getCollectionProducts(collection_id);
-	});
+	if(!!select){
+		select.removeEventListener('change', collectionChange);
+		select.addEventListener('change', collectionChange);
+	}
 
 };
 

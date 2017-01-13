@@ -45,7 +45,6 @@ export const getData = (path, callback) => {
 
 export const addData = (path, data, callback) => {
 	let ref = getRef(path);
-	let exists = false;
 
 	ref.orderByChild('id').equalTo(data.id).once('value')
 		.then((snapshot) => {
@@ -65,13 +64,16 @@ export const addData = (path, data, callback) => {
 				});
 			}
 			else {
-				ref.push(returnData);
+				ref.push(data);
+				returnData = data;
 			}
 			
 
 			if(!!callback){
 				callback(returnData);
 			}
+			
+			return returnData;
 		});
 
 	return ref;

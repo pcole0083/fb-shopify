@@ -7,17 +7,20 @@ function _writeToFile(dirPath, filename, errorData){
 		process.exit(1);
 	}
 
+	var fullFilePath = dirPath+'/'+filename;
+
 	if(typeof errorData == 'object'){
 		errorData = JSON.stringify(errorData);
 	}
 
-	fs.writeFile(dirPath+'/'+filename, errorData, function(err){
+	var typeOfWrite = fs.existsSync(fullFilePath) ? 'write' : 'writeFile';
+	
+	fs[typeOfWrite](fullFilePath, errorData+'\n', function(err){
 		if(err){
 			console.error(err);
 			process.exit(1);
 		}
 		console.log(filename+' logged successfully');
-		//process.exit();
 	});
 }
 
@@ -42,10 +45,9 @@ function mkdir(dir_path, callback){
 function getDateString(){
 	var date = new Date();
 	var dateArray = [
-		date.getMonth()+1,
+		date.getMonth()+1, //getMonth returns 0-11
 		date.getDate(),
-		date.getFullYear(),
-		Date.now()
+		date.getFullYear()
 	];
 	return dateArray.join("-"); 
 }

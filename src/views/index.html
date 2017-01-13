@@ -12,11 +12,6 @@
     </head>
     <body>
         <div id='app' class='container-fluid'>
-            <div class="row">
-                <div class="col-xs-12">
-                    <h1>Firebase + Shopify Node Sever</h1>
-                </div>
-            </div>
             <div id="setupFirebase" class="row hidden">
                 <div class="col-xs-12">
                     <h2>Setup Firebase</h2>
@@ -49,36 +44,95 @@
                 </div>
             </div>
             <div id="setupComplete" class="row hidden">
-                <div class="col-xs-12">
-                    <select id="collectionName" name="collection_name">
-                        <option value="null">Please select a collection</option>
-                    </select>
-                    <hr>
-                    <p>or</p>
-                    <hr>
-                    <form id="newCollection">
-                        <input name="collection_name_new" placeholder="Collection Name" />
-                        <button type="submit" class="btn btn-primary">Create New Collection</button>
-                    </form>
-                    <hr>
-                    <div class="existing-producs">
-                        <h2>Products</h2>
-                        <ul id='dataDump'></ul>
-                        <form id="addProduct">
-                            <select id="allOtherProducts" name="product_id">
-                                <option value="null">Select a product to add</option>
-                            </select>
-                            <input class="current-collection-id" type="hidden" name="collection_id" value="" />
-                            <button type="submit" class="btn btn-primary">Add Product to Collection</button>
-                        </form>
-                        <hr>
-                        <form id="newProduct">
-                            <input name="product_name" placeholder="Product Name" />
-                            <input class="current-collection-id"  type="hidden" name="collection_id" value="" />
-                            <button type="submit" class="btn btn-primary">Create New Product</button>
-                        </form>
-                        <hr>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1>Welcome to the Pixafy Shop</h1>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel panel-info">
+                              <div class="panel-heading">
+                                <h3 class="panel-title">Theme Enhancements 1</h3>
+                              </div>
+                              <div class="panel-body">
+                                <div class="btn-group" role="group" aria-label="...">
+                                  <a href="#" class="btn btn-default">Video Commerce</a>
+                                  <a href="#" class="btn btn-default">Full Screen Product Images</a>
+                                  <a href="#" class="btn btn-default">Product Quick View</a>
+                                  <a href="#" class="btn btn-default">Social Media Links</a>
+                                </div>
+                              </div>
+                              <div class="panel-footer"><a class="btn btn-primary" href="/billing/Theme%20Enhancements%201/30.0">Add all for $30/month</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel panel-info">
+                              <div class="panel-heading">
+                                <h3 class="panel-title">Sales Drivers</h3>
+                              </div>
+                              <div class="panel-body">
+                                <div class="btn-group" role="group" aria-label="...">
+                                  <a href="#" class="btn btn-success">Sales Driver 1</a>
+                                  <a href="#" class="btn btn-success">Sales Driver 2</a>
+                                  <a href="#" class="btn btn-success">Sales Driver 3</a>
+                                </div>
+                              </div>
+                              <div class="panel-footer"><a class="btn btn-primary" href="/billing/Sales%20Drivers/50.0">Add all for $50/month</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel panel-info">
+                              <div class="panel-heading">
+                                <h3 class="panel-title">Marketing Tools</h3>
+                              </div>
+                              <div class="panel-body">
+                                <div class="btn-group" role="group" aria-label="...">
+                                  <a href="#" class="btn btn-info">Marketing Tool 1</a>
+                                  <a href="#" class="btn btn-info">Marketing Tool 2</a>
+                                  <a href="#" class="btn btn-info">Marketing Tool 3</a>
+                                </div>
+                              </div>
+                              <div class="panel-footer"><a class="btn btn-primary" href="/billing/Sales%20Drivers/100.0">Add all for $100/month</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel panel-info">
+                              <div class="panel-heading">
+                                <h3 class="panel-title">Enterprise Support</h3>
+                              </div>
+                              <div class="panel-body">
+                                <div class="btn-group" role="group" aria-label="Enterprise Support Options">
+                                  <a href="/billing/Support10/1800.0" class="btn btn-warning">10 hours / month</a>
+                                  <a href="/billing/Support20/3600.0" class="btn btn-danger">20 hours / month</a>
+                                  <a href="/billing/Discovery/3000.0" class="btn btn-success">Business Goals Discovery</a>
+                                </div>
+                              </div>
+                              <div class="panel-footer"><a class="btn btn-primary" href="#">Contact Us For More Details</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <nav class="shop-sidebar affix">
+                        <ul class="nav nav-sidebar">
+                            <li><h4>Welcome User</h4></li>
+                            <li>
+                                <h3>Your Products</h3>
+                                <ul class="nav">
+                                    <li><a href="/testing">Test Page</a></li>
+                                    <li><a href="#vidcom">Video Commerce</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>

@@ -8,6 +8,8 @@ import productsRouter from './server/routes/products.js';
 import configsRouter from './server/routes/configs.js';
 import authRouter from './server/routes/auth.js';
 import storeRouter from './server/routes/store.js';
+import billingRouter from './server/routes/billing.js';
+import testingRouter from './server/routes/testing.js';
 
 const env = process.env.NODE_ENV || 'development';
 const env_config = config[env];
@@ -48,11 +50,15 @@ app
 
 	.use('/auth', authRouter)
 
+	.use('/testing', testingRouter)
+
 	.use('/store', storeRouter)
 
 	.use('/collections', collectionsRouter)
 
 	.use('/products', productsRouter)
+
+	.use('/billing', billingRouter)
 
 	.listen(process.argv[2] || 3030, () => {
 		var port = process.argv[2] || 3030;

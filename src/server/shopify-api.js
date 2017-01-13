@@ -28,11 +28,17 @@ const getInstance = (request) => {
 	return new Shopify(request.session.authData);
 };
 
+const noInstance = {'error': 'Instance of Shopify not found'};
+
 /**
  * Store
  *  - only 1 method
  */
 const getStore = (shopify, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	if(!callback){
 		callback = noop;
 	}
@@ -42,7 +48,8 @@ const getStore = (shopify, callback) => {
 		})
 		.then(store => callback(store))
 		.catch(err => {
-			logError('shopify', {'getStore': err });
+			logError('shopify', {'getStore': err});
+			callback({'error': err});
 		});
 };
 
@@ -54,6 +61,10 @@ const getStore = (shopify, callback) => {
  * - getters
  */
 const getCollectionById = (shopify, collection_id, number, fields, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	if(!callback){
 		callback = noop;
 	}
@@ -70,6 +81,10 @@ const getCollectionById = (shopify, collection_id, number, fields, callback) => 
 		});
 };
 const getCollectionByName = (shopify, collection_name, fields, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	if(!callback){
 		callback = noop;
 	}
@@ -93,8 +108,9 @@ const getCollectionByName = (shopify, collection_name, fields, callback) => {
  */
 const setNewCollectionName = (shopify, collection_name, callback) => {
 	if(!shopify){
-		return {'error': 'Shopify instance required!'};
+		return noInstance;
 	}
+
 	if(!callback){
 		callback = noop;
 	}
@@ -109,6 +125,10 @@ const setNewCollectionName = (shopify, collection_name, callback) => {
 		});
 };
 const addProductToCollection = (shopify, collection_id, product_id, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	if(!callback){
 		callback = noop;
 	}
@@ -166,6 +186,10 @@ const addProductToCollection = (shopify, collection_id, product_id, callback) =>
  *  - getters
  */
 const getProduct = (shopify, product_id, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	return shopify.product.get(product_id)
 		.then(product => callback(product))
 		.catch(err => {
@@ -174,11 +198,16 @@ const getProduct = (shopify, product_id, callback) => {
 		});
 };
 const getProductsCollection = (shopify, collection_id, number, fields, callback) => {
-	let defaultFields = ['id'];
+	if(!shopify){
+		return noInstance;
+	}
+
 	if(!callback){
 		callback = noop;
 	}
 
+	let defaultFields = ['id'];
+	
 	return shopify.product.list({
 			'collection_id': collection_id,
 			'limit': number || 10,
@@ -195,6 +224,10 @@ const getProductsCollection = (shopify, collection_id, number, fields, callback)
  *  - setters
  */
 const setProduct = (shopify, product_options, collectionId, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	if(!callback){
 		callback = noop;
 	}
@@ -227,6 +260,10 @@ const setProduct = (shopify, product_options, collectionId, callback) => {
  */
 
 const getChargeById = (shopify, id) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	return shopify.recurringApplicationCharge.get(id, ['status'])
 		.then(callback)
 		.catch(err => {
@@ -236,6 +273,10 @@ const getChargeById = (shopify, id) => {
 };
 
 const addRecurringCharge = (shopify, options, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	return shopify.recurringApplicationCharge.create(options)
 		.then(callback)
 		.catch(err => {
@@ -245,6 +286,10 @@ const addRecurringCharge = (shopify, options, callback) => {
 };
 
 const startRecurringCharge = (shopify, id, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
 	return shopify.recurringApplicationCharge.activate(id, params)
 		.then(callback)
 		.catch(err => {
@@ -263,7 +308,10 @@ var SHAPI = (function(){
 		addProductToCollection: addProductToCollection,
 		getProduct: getProduct,
 		getProductsCollection: getProductsCollection,
-		setProduct: setProduct
+		setProduct: setProduct,
+		getChargeById: getChargeById,
+		addRecurringCharge: addRecurringCharge,
+		startRecurringCharge: startRecurringCharge
 	};
 }());
 

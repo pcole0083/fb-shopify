@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title> FB-SP </title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            .update-data .glyphicon-refresh { pointer-events: none; }
+        </style>
+    </head>
+    <body>
+        <div id='app' class='container-fluid'>
+            <div id="setupFirebase" class="row hidden">
+                <div class="col-xs-12">
+                    <h2>Setup Firebase</h2>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <a class="btn btn-info" href="https://firebase.google.com/">Create a new Firebase Account or Project</a>
+                        </div>
+                        <div class="panel-body">
+                            Then fill out the form below.
+                        </div>
+                    </div>
+                    <form id="firebaseConfig">
+                        <div class="formGroup">
+                            <label for="apiKey">API Key</label>
+                            <input type="text" name="apiKey" class="form-control" id="apiKey" placeholder="API Key">
+                        </div>
+                        <hr>
+                        <div class="formGroup">
+                            <label for="authDomain">Auth Domain</label>
+                            <input type="text" name="authDomain" class="form-control" id="authDomain" placeholder="Auth Domain">
+                        </div>
+                        <hr>
+                        <div class="formGroup">
+                            <label for="databaseURL">Database URL</label>
+                            <input type="text" name="databaseURL" class="form-control" id="databaseURL" placeholder="Database URL">
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div id="setupComplete" class="row hidden">
+                <div class="col-md-9">
+                    <h2>Test Shopify API Features</h2>
+                    <div class="well well-lg">
+                        <p>
+                            <select id="collectionName" name="collection_name">
+                                <option value="null">Please select a collection</option>
+                            </select>
+                        </p>
+                        <hr>
+                        <p>or</p>
+                        <hr>
+                        <form id="newCollection">
+                            <input name="collection_name_new" placeholder="Collection Name" />
+                            <button type="submit" class="btn btn-primary">Create New Collection</button>
+                        </form>
+                        <hr>
+                        <div class="existing-producs">
+                            <h2>Products</h2>
+                            <ul id='dataDump'></ul>
+                            <form id="addProduct">
+                                <select id="allOtherProducts" name="product_id">
+                                    <option value="null">Select a product to add</option>
+                                </select>
+                                <input class="current-collection-id" type="hidden" name="collection_id" value="" />
+                                <button type="submit" class="btn btn-primary">Add Product to Collection</button>
+                            </form>
+                            <hr>
+                            <form id="newProduct">
+                                <input name="product_name" placeholder="Product Name" />
+                                <input class="current-collection-id"  type="hidden" name="collection_id" value="" />
+                                <button type="submit" class="btn btn-primary">Create New Product</button>
+                            </form>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <nav class="shop-sidebar affix">
+                        <ul class="nav nav-sidebar">
+                            <li><h4>Welcome User</h4></li>
+                            <li>
+                                <h3>Your Products</h3>
+                                <ul class="nav">
+                                    <li><a href="/">&laquo; Back</a></li>
+                                    <li><a href="/testing">Test Page</a></li>
+                                    <li><a href="#vidcom">Video Commerce</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <script src='./build/client/all'></script>
+    </body>
+</html>
