@@ -32,39 +32,38 @@ var setStoreData = function(request, response, next) {
 };
 
 billingRouter
-	.route(['/', '/:name', '/:name/:price'])
+	.route('/:name*?')
 	//.all(setStoreData)
-	.get(urlencode, setStoreData, (request, response) => {
+	.get(urlencode, (request, response) => {
+		console.log(request.params);
 		let params = env_config.billing;
+		let reqPrice = request.params['0'];
 
 		params.return_url = params.return_url;
 
-		if(!!request.body.name){
-			params.name = request.body.name;
+		if(!!request.params.name){
+			params.name = request.params.name;
 		}
 
-		if(!!request.body.price){
-			params.price = request.body.price;
+		if(!!reqPrice && !isNaN(reqPrice)){
+			params.price = Number(reqPrice);
 		}
 
 		if(!request.session.ref_path && !!request.session.authData){
 			request.session.ref_path = 'shopify/'+request.session.authData.shopName;
 		}
 
-		response.redirect(env_config.baseUrl);
-
-		// SHAPI.
-		// 	addRecurringCharge(SHAPI.getInstance(request), params, (recurring_charge) => {
-		// 		if(!!recurring_charge.error){
-		// 			response.status(200).json({'error':recurring_charge.error, 'params': params});
-		// 			//response.redirect('..');
-		// 		}
-		// 		else {
-		// 			FBAPI.addData(request.session.ref_path+'/recurring_charges', recurring_charge, () => {
-		// 				response.redirect(recurring_charge.confirmation_url);
-		// 			});
-		// 		}
-		// 	});
+		SHAPI.
+			addRecurringCharge(SHAPI.getInstance(request), params, (recurring_charge) => {
+				if(!!recurring_charge.error){
+					response.status(200).json({'error':recurring_charge.error, 'params': params});
+				}
+				else {
+					FBAPI.addData(request.session.ref_path+'/recurring_charges', recurring_charge, () => {
+						response.redirect(recurring_charge.confirmation_url);
+					});
+				}
+			});
 	});
 
 billingRouter
@@ -78,11 +77,9 @@ billingRouter
 
 		SHAPI.
 			getChargeById(charge_id, ['status'], (charge_obj) => {
-				if(charge_obj.status === 'accepted'){
-					FBAPI.addData(request.session.ref_path+'/recurring_charges', {'id': charge_id, 'status': charge_obj.status});
-				}
-				console.log(env_config.baseUrl);
-				//
+				
+				FBAPI.addData(request.session.ref_path+'/recurring_charges', {'id': charge_id, 'status': charge_obj.status});
+				
 				response.redirect(env_config.baseUrl);
 			});
 	});
