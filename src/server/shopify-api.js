@@ -44,7 +44,7 @@ const getStore = (shopify, callback) => {
 	}
 
 	return shopify.shop.get({
-			fields: ['id', 'name', 'email', 'country', 'currency', 'plan_name', 'myshopify_domain', 'force_ssl']
+			fields: ['id', 'name', 'email', 'address1', 'address2', 'city', 'zip', 'country', 'currency', 'plan_name', 'myshopify_domain', 'force_ssl']
 		})
 		.then(store => callback(store))
 		.catch(err => {

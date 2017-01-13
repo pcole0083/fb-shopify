@@ -18,21 +18,21 @@ export const getRef = (path) => {
 		return;
 	}
 	return firebase.database().ref(path);
-}
+};
 
 export const query = (ref, chain) => {
 	Object.keys(chain).map((methodName, index) => {
 		let param = chain[methodName];
 		ref[methodName](param);
 	});
-}
+};
 
 export const listen = (ref, listenType, eventName, callback) => {
 	if(!callback){
 		return ref[listenType](eventName);
 	}
 	return ref[listenType](eventName, callback);
-}
+};
 
 export const getData = (path, callback) => {
 	let ref = getRef(path);
@@ -41,12 +41,20 @@ export const getData = (path, callback) => {
 		.catch(err => {
 			console.log(err);
 		});
-}
+};
+
+export const getSnapshotByPath = (path, orderBy) => {
+	return getRef(path).orderByChild(orderBy).once('value');
+};
+
+export const getSnapshotByDataId = (path, data) => {
+	return getRef(path).orderByChild('id').equalTo(data.id).once('value');
+};
 
 export const addData = (path, data, callback) => {
 	let ref = getRef(path);
 
-	ref.orderByChild('id').equalTo(data.id).once('value')
+	return ref.orderByChild('id').equalTo(data.id).once('value')
 		.then((snapshot) => {
 			let dataPoints = snapshot.exportVal(),
 				returnData = dataPoints;
@@ -58,7 +66,13 @@ export const addData = (path, data, callback) => {
 
 					let dataNew = Object.assign(dataPt, data);
 					//let newRef = getRef(path+'/'+key);
-					childSnapshot.update(dataNew);
+					if(childSnapshot.ref){
+						childSnapshot.ref.update(dataNew);
+					}
+					else {
+						childSnapshot.update(dataNew);
+					}
+					
 					returnData = dataNew;
 					return true;
 				});
@@ -75,6 +89,26 @@ export const addData = (path, data, callback) => {
 			
 			return returnData;
 		});
+};
 
-	return ref;
+export const snapshotUpdate = (snapshot, data, ref) => {
+	if(!!snapshot.exists()){
+		let updated = false;
+		snapshot.forEach((childSnapshot) => {
+			let key = childSnapshot.key,
+				dataPt = childSnapshot.val();
+			console.log(key);
+			if(data.id === dataPt.id){
+				let dataNew = Object.assign(dataPt, data);
+				//console.log(childSnapshot);
+				childSnapshot.ref.update(dataNew);
+				updated = true;
+				return true;
+			}
+		});
+
+		if(!updated && !!ref) {
+			ref.push(data);
+		}
+	}
 }

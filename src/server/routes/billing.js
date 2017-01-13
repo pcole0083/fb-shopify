@@ -12,32 +12,42 @@ const billingRouter = express.Router();
 const urlencode = bodyParser.urlencoded({ extended: false });
 
 var setStoreData = function(request, response, next) {
+	let store_name = !!request.session.authData ? request.session.authData.shopName : null;
+	let ref_path = 'shopify/'+store_name;
+	
 	SHAPI
-		.getStore(SHAPI.getInstance(request), (store) => {
+		.getStore(SHAPI.getInstance(request))
+		.then(store => {
 			if(!!store.error){
 				console.log("Store");
 				console.log(store.error);
-				next();
 			}
 
-			let store_name = !!request.session.authData ? request.session.authData.shopName : store.myshopify_domain.replace('.myshopify.com', '');
-			let ref_path = 'shopify/'+store_name;
-			//let fbStore = FBAPI.getRef(ref_path);
+			if(!store_name){
+				store_name = !!request.session.authData ? request.session.authData.shopName : store.myshopify_domain.replace('.myshopify.com', '');
+				ref_path = 'shopify/'+store_name;
+			}
 
-			FBAPI.addData(ref_path+'/store', store, (returnData) => {
-				request.session.ref_path = ref_path;
-				next();
-			});
-		});
+			return Promise.all([store, FBAPI.getSnapshotByPath(ref_path+'/store', 'id')])
+		})
+		.then(results => {
+			console.log(results[0]);
+			FBAPI.snapshotUpdate(results[1], results[0]);
+			next();
+		})
+		.catch(err => {
+			console.log(err);
+			next();
+		})
 };
 
 billingRouter
 	.route('/:name*?')
-	//.all(setStoreData)
+	.all(setStoreData)
 	.get(urlencode, (request, response) => {
 		console.log(request.params);
 		let params = env_config.billing;
-		let reqPrice = request.params['0'];
+		let reqPrice = request.params['0'].substring(1);
 
 		params.return_url = params.return_url;
 
