@@ -44,6 +44,16 @@ var checkFirebaseCreds = (function(){
 // 	});
 // }());
 
+function productListDisplayTemplate(product){
+	var template = '<li>{{title}}'+
+	' <button class="btn btn-info btn-sm update-data" data-id="{{id}}">'+
+	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
+	'<input type="text" name="show_at" placeholder="Time in video" data-id="{{id}}" value="{{show_at}}" />'+
+	'</li>';
+
+	return template.replace('{{title}}', product.title).replace('{{id}}', product.id).replace('{{show_at}}', product.show_at || '');
+};
+
 function getCollectionProducts(collection_id){
 	if(!initialCookies || !initialCookies.shopname){
 		return console.log('Store name needs to be set first.');
@@ -74,7 +84,7 @@ function getCollectionProducts(collection_id){
 			});
 
 			var productTitles = !!products.length ? products.map((product) => {
-				return '<li>'+product.title+' <button class="btn btn-info btn-sm update-data" data-id="'+product.id+'"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></li>';
+				return productListDisplayTemplate(product);
 			}) : ['<li>No products found for this collection.</li>'];
 
 			var notInCollection = !!not_in.length ? not_in.map((product) => {

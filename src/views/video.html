@@ -9,6 +9,7 @@
         <style>
             .shop-sidebar { top: 69px; }
             .update-data .glyphicon-refresh { pointer-events: none; }
+            .dashed-wrapper { padding: 10px 0; border: 3px dashed #ccc; }
         </style>
     </head>
     <body>
@@ -18,43 +19,54 @@
                     <h2>Video Commerce</h2>
                     <div class="well well-lg">
                         <div class="row">
-                            <div class="col-xs-6 col-xs-offset-3">
-                                <p>Create a new Video</p>
-                                <p><button class="btn btn-primary">Start</button></p>
+                            <div class="col-sm-6 col-sm-offset-3 dashed-wrapper">
+                                <h4 class="text-center">Create a new Video Feature</h4>
+                                <p class="text-center"><button class="btn btn-primary">Begin</button></p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <h3>Select a Collection</h3>
-                                <form id="newCollection">
-                                    <input name="collection_name_new" placeholder="Collection Name" />
-                                    <button type="submit" class="btn btn-primary">Create New Collection</button>
-                                </form>
-                            </div>
-                            <div class="col-sm-6">
-                                <h3>Create a new Collection</h3>
-                                <select id="collectionName" name="form-control collection_name">
+                                <h4>Select a Collection</h4>
+                                <select id="collectionName" class="form-control" name="collection_name">
                                     <option value="null">Please select a collection</option>
                                 </select>
                             </div>
+                            <div class="col-sm-6">
+                                <h4>Create a new Collection</h4>
+                                <form id="newCollection">
+                                    <div class="input-group">
+                                        <input name="collection_name_new" placeholder="Collection Name" class="form-control" />
+                                        <span class="input-group-btn"><button type="submit" class="btn btn-primary">Create</button></span>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                         <div class="row existing-producs">
-                            <h2>Products</h2>
-                            <ul id='dataDump'></ul>
-                            <form id="addProduct">
-                                <select id="allOtherProducts" name="form-control product_id">
-                                    <option value="null">Select a product to add</option>
-                                </select>
-                                <input class="current-collection-id" type="hidden" name="collection_id" value="" />
-                                <button type="submit" class="btn btn-primary">Add Product to Collection</button>
-                            </form>
-                            <hr>
-                            <form id="newProduct">
-                                <input name="product_name" placeholder="Product Name" />
-                                <input class="current-collection-id"  type="hidden" name="collection_id" value="" />
-                                <button type="submit" class="btn btn-primary">Create New Product</button>
-                            </form>
-                            <hr>
+                            <div class="col-sm-6">
+                                <h4>Products</h4>
+                                <ul id='dataDump'></ul>
+                                <form id="newProduct">
+                                    <input class="current-collection-id" type="hidden" name="collection_id" value="" />
+                                    <div class="input-group">
+                                        <input name="product_name" placeholder="Product Name" class="form-control" />
+                                        <span class="input-group-btn"><button type="submit" class="btn btn-primary">Create New Product</button></span>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4>Add Product to Collection</h4>
+                                <form id="addProduct">
+                                    <input class="current-collection-id" type="hidden" name="collection_id" value="" />
+                                    <div class="input-group">
+                                        <select id="allOtherProducts" class="form-control" name="product_id">
+                                            <option value="null">Select a product to add</option>
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
