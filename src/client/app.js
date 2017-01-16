@@ -45,10 +45,13 @@ var checkFirebaseCreds = (function(){
 // }());
 
 function productListDisplayTemplate(product){
-	var template = '<li>{{title}}'+
-	' <button class="btn btn-info btn-sm update-data" data-id="{{id}}">'+
-	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
-	'<input type="text" name="show_at" placeholder="Time in video" data-id="{{id}}" value="{{show_at}}" />'+
+	var template = '<li class="list-group-item">'+
+	'<p>{{title}} <button class="btn btn-info btn-sm update-data" data-id="{{id}}">'+
+	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></p>'+
+	'<div class="input-group">'+
+	'<span class="input-group-addon">Show at</span>'+
+	'<input class="form-control" type="text" name="show_at" placeholder="Example: 1:00" data-id="{{id}}" value="{{show_at}}" />'+
+	'</div>'+
 	'</li>';
 
 	return template.replace('{{title}}', product.title).replace('{{id}}', product.id).replace('{{show_at}}', product.show_at || '');
