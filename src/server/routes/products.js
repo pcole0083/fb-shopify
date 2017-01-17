@@ -7,8 +7,8 @@ import SHAPI from '../shopify-api.js';
 const productsRouter = express.Router();
 const urlencode = bodyParser.urlencoded({ extended: false });
 
-const fbCollections = FBAPI.getRef('shopify/collections');
-const fbProducts 	= FBAPI.getRef('shopify/products');
+//const fbCollections = FBAPI.getRef('shopify/collections');
+//const fbProducts 	= FBAPI.getRef('shopify/products');
 
 const getProductById = function(request, response, next){
 	let productId = request.body.product_id;
@@ -19,9 +19,18 @@ const getProductById = function(request, response, next){
 		}).then(next);
 };
 
+const creatRefUrl = function(request, extend){
+	if(!!request.session.authData.shopName && !!extend){
+		return 'shopify/'+request.session.authData.shopName+'/'+extend;
+	}
+	return null;
+};
+
 productsRouter
 	.route('/')
 	.get( (request, response) => {
+		let fbProducts = FBAPI.getRef(creatRefUrl(request, 'products'));
+
 		FBAPI
 			.listen(fbProducts, 'once', 'value')
 			.then((snapshot) => {
@@ -47,7 +56,9 @@ productsRouter
 	})
 
 	.get( (request, response) => {
-		var collectionName = request.collectionName;
+		let collectionName = request.collectionName;
+		let fbCollections = FBAPI.getRef(creatRefUrl(request, 'collections'));
+		let fbProducts = FBAPI.getRef(creatRefUrl(request, 'products'));
 
 		FBAPI
 			.listen(fbCollections, 'once', 'value')
@@ -93,7 +104,7 @@ productsRouter
 		let product = request.body.product;
 		//get product dat from Shopify
 		FBAPI
-			.addData('shopify/products', product, (product_data) => {
+			.addData(creatRefUrl(request, 'products'), product, (product_data) => {
 				return response.status(200).json([{'updated': product.title}, product_data]);
 			});
 	});
@@ -109,6 +120,7 @@ productsRouter
 			return response.status(200).json([{'new': productName}, request.body]);
 		}
 
+		let fbProducts = FBAPI.getRef(creatRefUrl(request, 'products'));
 		let productOptions = {
 			"title": productName,
 			"metafields": [

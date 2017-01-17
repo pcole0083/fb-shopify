@@ -10,7 +10,7 @@ const fbProducts = FBAPI.getRef('shopify/products');
 
 const creatRefUrl = function(request, extend){
 	if(!!request.session.authData.shopName && !!extend){
-		return 'shopify/'+request.session.authData.shopName+extend;
+		return 'shopify/'+request.session.authData.shopName+'/'+extend;
 	}
 	return null;
 };
@@ -43,14 +43,14 @@ collectionsRouter
 			response.status(200).json({'error': 'Session not yet established.'});
 		}
 		else{
-			let fbCollections = FBAPI.getRef(creatRefUrl(request, '/collections'));
+			let fbCollections = FBAPI.getRef(creatRefUrl(request, 'collections'));
 			request.fbCollections = fbCollections;
 			next();
 		}
 	})
 	.get( (request, response) => {
 		FBAPI
-			.getData(creatRefUrl(request, '/collections'))
+			.getData(creatRefUrl(request, 'collections'))
 			.then((snapshot) => {
 				if( snapshot.exists() ){
 					var collections = [];
@@ -92,7 +92,7 @@ collectionsRouter
 
 	.get( (request, response) => {
 		var name = request.collectionName;
-		let fbCollections = FBAPI.getRef(creatRefUrl(request, '/collections'));
+		let fbCollections = FBAPI.getRef(creatRefUrl(request, 'collections'));
 
 		FBAPI
 			.listen(fbCollections, 'once', 'value')
@@ -112,7 +112,7 @@ collectionsRouter
 			return response.status(200).json([{'new': collectionName}, request.body]);
 		}
 
-		let fbCollections = FBAPI.getRef(creatRefUrl(request, '/collections'));
+		let fbCollections = FBAPI.getRef(creatRefUrl(request, 'collections'));
 
 		SHAPI.
 			setNewCollectionName(SHAPI.getInstance(request), collectionName, (collection) => {
@@ -148,7 +148,7 @@ collectionsRouter
 			return response.status(200).json([{'id': collectionId}, request.body]);
 		}
 
-		let fbProducts = creatRefUrl(request, '/products')
+		let fbProducts = FBAPI.getRef(creatRefUrl(request, 'products'));
 
 		SHAPI.
 			addProductToCollection(SHAPI.getInstance(request), collectionId, productId, (collect) => {
@@ -161,7 +161,7 @@ collectionsRouter
 				}
 
 				FBAPI
-					.addData(creatRefUrl(request, '/collections'), {
+					.addData(creatRefUrl(request, 'collections'), {
 						'id': collectionId,
 						'products_count': collect.position || 1
 					});
