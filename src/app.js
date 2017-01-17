@@ -1,6 +1,7 @@
 import express from 'express';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 import config from './config.js';
 import collectionsRouter from './server/routes/collections.js';
@@ -20,6 +21,7 @@ const app = express();
 //var RedisStore = require('connect-redis')(session);
 
 app
+	.use(helmet())
 	.use(express.static(__dirname + '/views'))
 	.use(express.static(__dirname + '/client'))
 
