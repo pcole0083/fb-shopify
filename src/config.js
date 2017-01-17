@@ -14,7 +14,7 @@ const config = {
 			sharedSecret: '7969310b79a5e99b21349e2097a5ff40',
 			redirectUri: baseUrls['development']+'auth/grant',
 			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
-			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags']
+			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags', 'read_themes', 'write_themes']
 		},
 		billing: {
 			"name": "Test Charge",
@@ -34,7 +34,7 @@ const config = {
 			sharedSecret: '7969310b79a5e99b21349e2097a5ff40',
 			redirectUri: baseUrls['staging']+'auth/grant',
 			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
-			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags']
+			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags', 'read_themes', 'write_themes']
 		},
 		billing: {
 			"name": "Test Charge",
@@ -54,7 +54,7 @@ const config = {
 			sharedSecret: '7969310b79a5e99b21349e2097a5ff40',
 			redirectUri: baseUrls['production']+'auth/grant',
 			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
-			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags']
+			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags', 'read_themes', 'write_themes']
 		},
 		billing: {
 			"name": "Test Charge",

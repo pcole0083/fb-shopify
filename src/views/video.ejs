@@ -1,0 +1,91 @@
+<% include ./partials/head %>
+<style>
+    .dashed-wrapper { padding: 10px 0; border: 3px dashed #ccc; }
+    .ordered-list-group-item { display: list-item;clear: both; }
+    .ordered-list-group-item > .row { display: inline-block; }
+</style>
+<div id="setupComplete" class="row hidden">
+    <div class="col-xs-9">
+        <h2>Video Commerce</h2>
+        <div class="well well-lg">
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3 dashed-wrapper">
+                    <h4 class="text-center">Create a new Video Feature</h4>
+                    <p class="text-center"><button class="btn btn-primary">Begin</button></p>
+                </div>
+            </div>
+            <hr>
+            <ol class="list-group">
+                <% videos.forEach(function(video) { %>
+                    <li class="ordered-list-group-item list-group-item">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4>Choose Video Type</h4>
+                                <select id="videoType" class="form-control" name="video_type">
+                                    <option value="youtube">Youtube</option>
+                                    <option value="facebook">Facebook</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4>Enter Video ID</h4>
+                                <div class="input-group">
+                                    <input name="video_id" placeholder="Video ID" class="form-control" />
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4>Select a Collection</h4>
+                                <select id="collectionName" class="form-control" name="collection_name">
+                                    <option value="null">Please select a collection</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4>Create a new Collection</h4>
+                                <form id="newCollection">
+                                    <div class="input-group">
+                                        <input name="collection_name_new" placeholder="Collection Name" class="form-control" />
+                                        <span class="input-group-btn"><button type="submit" class="btn btn-primary">Create</button></span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row existing-producs">
+                            <div class="col-sm-6">
+                                <h4>Products</h4>
+                                <ul id='dataDump' class="list-group"><li class="list-group-item disabled">Select a Collection</li></ul>
+                                <form id="newProduct">
+                                    <input class="current-collection-id" type="hidden" name="collection_id" value="" />
+                                    <div class="input-group">
+                                        <input name="product_name" placeholder="Product Name" class="form-control" />
+                                        <span class="input-group-btn"><button type="submit" class="btn btn-primary">Create New Product</button></span>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4>Add Product to Collection</h4>
+                                <form id="addProduct">
+                                    <input class="current-collection-id" type="hidden" name="collection_id" value="" />
+                                    <div class="input-group">
+                                        <select id="allOtherProducts" class="form-control" name="product_id">
+                                            <option value="null">Select a product to add</option>
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                <% }); %>
+            </ol>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>

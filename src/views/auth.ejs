@@ -1,0 +1,20 @@
+<% include ./partials/head %>
+<div class="row">
+    <div class="col-xs-12">
+        <h1>Firebase + Shopify Node Sever</h1>
+    </div>
+</div>
+<div id="setupAuth" class="row">
+    <div class="col-xs-12">
+        <h2>Please enter your store name</h2>
+        <form action="/auth" method="post">
+            <div class="formGroup">
+                <label for="databaseURL">Store Name</label>
+                <input type="text" name="store_name" class="form-control" id="storeName" placeholder="Store Name">
+            </div>
+            <hr>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+</div>
+<% include ./partials/footer %>

@@ -88,7 +88,7 @@ function getCollectionProducts(collection_id){
 
 			var productTitles = !!products.length ? products.map((product) => {
 				return productListDisplayTemplate(product);
-			}) : ['<li>No products found for this collection.</li>'];
+			}) : ['<li class="list-group-item">No products found for this collection.</li>'];
 
 			var notInCollection = !!not_in.length ? not_in.map((product) => {
 				return '<option value="'+product.id+'">'+product.title+'</option>';

@@ -62,7 +62,8 @@ authRouter
 			response.redirect(authUrl);
 		}
 		else {
-			response.sendFile('auth.html', { root: path.resolve(__dirname, '../../views')});
+			//response.sendFile('auth.html', { root: path.resolve(__dirname, '../../views')});
+			response.render('auth', {});
 		}
 	})
 	.post(urlencode, (request, response) => {

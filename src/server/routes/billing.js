@@ -28,7 +28,7 @@ var setStoreData = function(request, response, next) {
 				ref_path = 'shopify/'+store_name;
 			}
 
-			return Promise.all([store, FBAPI.getSnapshotByPath(ref_path+'/store', 'id')])
+			return Promise.all([store, FBAPI.getSnapshotByPath(ref_path+'/store', 'id')]);
 		})
 		.then(results => {
 			console.log(results[0]);

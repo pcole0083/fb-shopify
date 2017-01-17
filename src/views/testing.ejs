@@ -1,0 +1,42 @@
+<% include ./partials/head %>
+<% include ./partials/setup_firebase %>
+<div id="setupComplete" class="row hidden">
+    <div class="col-xs-9">
+        <h2>Test Shopify API Features</h2>
+        <div class="well well-lg">
+            <p>
+                <select id="collectionName" name="collection_name">
+                    <option value="null">Please select a collection</option>
+                </select>
+            </p>
+            <hr>
+            <p>or</p>
+            <hr>
+            <form id="newCollection">
+                <input name="collection_name_new" placeholder="Collection Name" />
+                <button type="submit" class="btn btn-primary">Create New Collection</button>
+            </form>
+            <hr>
+            <div class="existing-producs">
+                <h2>Products</h2>
+                <ul id='dataDump'></ul>
+                <form id="addProduct">
+                    <select id="allOtherProducts" name="product_id">
+                        <option value="null">Select a product to add</option>
+                    </select>
+                    <input class="current-collection-id" type="hidden" name="collection_id" value="" />
+                    <button type="submit" class="btn btn-primary">Add Product to Collection</button>
+                </form>
+                <hr>
+                <form id="newProduct">
+                    <input name="product_name" placeholder="Product Name" />
+                    <input class="current-collection-id"  type="hidden" name="collection_id" value="" />
+                    <button type="submit" class="btn btn-primary">Create New Product</button>
+                </form>
+                <hr>
+            </div>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>

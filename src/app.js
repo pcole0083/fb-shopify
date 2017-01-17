@@ -22,8 +22,6 @@ const app = express();
 
 app
 	.use(helmet())
-	.use(express.static(__dirname + '/views'))
-	.use(express.static(__dirname + '/client'))
 
 	.use(session({
 		//store: new RedisStore(),
@@ -34,9 +32,17 @@ app
 
 	.use(cookieParser())
 
-	.get('/',function(req,res){
+	.set('view engine', 'ejs')
+	.set('views', __dirname + '/views')
+
+	//.use(express.static(__dirname + '/views'))
+	.use(express.static(__dirname + '/client'))
+
+	.get('/',function(request,response){
 		if(!!request.session && !!request.session.authData){
-			return res.sendFile('index.html');
+			return response.render('index', {
+				'name': 'index'
+			});
 		}
 		else {
 			return response.redirect(302, '/auth');

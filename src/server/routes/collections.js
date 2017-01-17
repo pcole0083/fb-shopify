@@ -6,7 +6,7 @@ import SHAPI from '../shopify-api.js';
 const collectionsRouter = express.Router();
 const urlencode = bodyParser.urlencoded({ extended: false });
 //const fbCollections = FBAPI.getRef('shopify/collections');
-const fbProducts = FBAPI.getRef('shopify/products');
+//const fbProducts = FBAPI.getRef('shopify/products');
 
 const creatRefUrl = function(request, extend){
 	if(!!request.session.authData.shopName && !!extend){
