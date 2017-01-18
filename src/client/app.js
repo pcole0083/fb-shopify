@@ -153,7 +153,7 @@ function dataSplit(stringData){
 
 var collectionChange = function(e){
 	var select = this,
-		collection_id = this.value;
+		collection_id = this.value,
 		index = this.getAttribute('data-index');
 	getCollectionProducts(collection_id, index);
 };
