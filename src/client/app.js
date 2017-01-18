@@ -142,31 +142,40 @@ var getAllCollectionOptions = function(){
 		setupComplete = document.querySelector('#setupComplete'),
 		options = [];
 
-	$.ajax({
-		url: './collections/',
-		type: 'GET',
-		dataType: 'json'
-	}).then( (response) => {
-		if(!!response.error){
-			console.log(response.error);
-			return window.location.replace('/auth');
-		}
 
-		if(!!select){
-			options = response.map( (opt) => {
-				return '<option value="'+opt.id+'" data-product-count="'+opt.product_count+'">'+opt.title+'</option>';
-			});
+	if(!!select && !select.children.length){
 
-			select.innerHTML = select.innerHTML + options.join('');
-		}
+		$.ajax({
+			url: './collections/',
+			type: 'GET',
+			dataType: 'json'
+		}).then( (response) => {
+			if(!!response.error){
+				console.log(response.error);
+				return window.location.replace('/auth');
+			}
 
-		if(!!setupComplete){
-			setupComplete.classList.remove('hidden');
-		}
-	})
-	.fail(err => {
-		console.error(err);
-	});
+			if(!!select){
+				options = response.map( (opt) => {
+					let selected = opt.id === select.getAttribute('data-selected') ? 'selected="selected"' : '';
+					return '<option value="'+opt.id+'" data-product-count="'+opt.product_count+'" '+selected+'>'+opt.title+'</option>';
+				});
+
+				select.innerHTML = select.innerHTML + options.join('');
+			}
+
+			if(!!setupComplete){
+				setupComplete.classList.remove('hidden');
+			}
+		})
+		.fail(err => {
+			console.error(err);
+		});
+
+	}
+	else if(!!setupComplete){
+		setupComplete.classList.remove('hidden');
+	}
 
 	if(!!select){
 		select.removeEventListener('change', collectionChange);

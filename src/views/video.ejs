@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-sm-6 col-sm-offset-3 dashed-wrapper">
                     <h4 class="text-center">Create a new Video Feature</h4>
-                    <p class="text-center"><button class="btn btn-primary">Begin</button></p>
+                    <form action="/video/new" method="post"><p class="text-center"><button type="submit" class="btn btn-primary">Begin</button></p></form>
                 </div>
             </div>
             <hr>
@@ -40,8 +40,15 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <h4>Select a Collection</h4>
-                                <select id="collectionName" class="form-control" name="collection_name">
+                                <select id="collectionName" class="form-control" name="collection_name" data-selected="<%= video.collection_id %>">
                                     <option value="null">Please select a collection</option>
+                                    <% collections.forEach(function(collection) { %>
+                                        <% if(Number(collection.id) === Number(video.collection_id)){ %>
+                                            <option value="<%= collection.id %>" data-product-count="<%= collection.product_count %>" selected="selected" ><%= collection.title %></option>
+                                        <% } else { %>
+                                            <option value="<%= collection.id %>" data-product-count="<%= collection.product_count %>" ><%= collection.title %></option>
+                                        <% } %>
+                                    <% }); %>
                                 </select>
                             </div>
                             <div class="col-sm-6">
@@ -78,6 +85,16 @@
                                             <button type="submit" class="btn btn-primary">Add</button>
                                         </span>
                                     </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3 col-xs-offset-9">
+                                <form action="/video/<%= video.id %>" method="post">
+                                    <input class="current-collection-id" type="hidden" name="collection_id" value="<%= video.collection_id %>" />
+                                    <input class="video-type" type="hidden" name="type" value="<%= video.type %>" />
+                                    <input class="video-id" type="hidden" name="video_id" value="<%= video.video_id %>" />
+                                    <button type="submit" class="btn btn-primary">Update</button>
                                 </form>
                             </div>
                         </div>

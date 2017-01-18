@@ -63,7 +63,7 @@ authRouter
 		}
 		else {
 			//response.sendFile('auth.html', { root: path.resolve(__dirname, '../../views')});
-			response.render('auth', {});
+			response.render('auth', {'name': 'auth'});
 		}
 	})
 	.post(urlencode, (request, response) => {
