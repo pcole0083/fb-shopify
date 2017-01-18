@@ -11,6 +11,15 @@ var initialCookies = (function(){
 	return cookiesObj;
 }());
 
+var attachEvent = function(selector, type, fn){
+	var eles = document.querySelectorAll(selector);
+	if(!!eles.length){
+		for (var i = 0; i < eles.length; i++) {
+			eles[i].addEventListener(type, fn);
+		}
+	}
+};
+
 var checkFirebaseCreds = (function(){
 	var setupFirebase = document.querySelector('#setupFirebase');
 	if(!!setupFirebase || !!setupComplete){
@@ -46,18 +55,29 @@ var checkFirebaseCreds = (function(){
 
 function productListDisplayTemplate(product){
 	var template = '<li class="list-group-item">'+
-	'<p>{{title}} <button class="btn btn-info btn-sm update-data" data-id="{{id}}">'+
-	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></p>'+
+	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}">'+
+	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
+	'<button class="btn btn-danger btn-xs pull-right remove-product" data-id="{{id}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></p>'+
 	'<div class="input-group">'+
 	'<span class="input-group-addon">Show at</span>'+
 	'<input class="form-control" type="text" name="show_at" placeholder="Example: 1:00" data-id="{{id}}" value="{{show_at}}" />'+
 	'</div>'+
 	'</li>';
 
-	return template.replace('{{title}}', product.title).replace('{{id}}', product.id).replace('{{show_at}}', product.show_at || '');
+	return template.replace('{{title}}', product.title).replace(/{{id}}/gi, product.id).replace('{{show_at}}', product.show_at || '');
 };
 
-function getCollectionProducts(collection_id){
+function notInCollectionTemplate(product){
+	var template = '<li class="list-group-item">'+
+	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}">'+
+	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
+	'<button class="btn btn-default btn-xs pull-right add-to" data-id="{{id}}"><i class="glyphicon glyphicon-plus"></i><span class="visible-lg-inline"> Add to Collection</span></button></p>'+
+	'</li>';
+
+	return template.replace('{{title}}', product.title).replace(/{{id}}/gi, product.id);
+};
+
+function getCollectionProducts(collection_id, index){
 	if(!initialCookies || !initialCookies.shopname){
 		return console.log('Store name needs to be set first.');
 	}
@@ -91,18 +111,18 @@ function getCollectionProducts(collection_id){
 			}) : ['<li class="list-group-item">No products found for this collection.</li>'];
 
 			var notInCollection = !!not_in.length ? not_in.map((product) => {
-				return '<option value="'+product.id+'">'+product.title+'</option>';
-			}) : [];
+				return notInCollectionTemplate(product);
+			}) : ['<li class="list-group-item">No products more products to add.</li>'];
 
-			notInCollection.unshift('<option value="null">Select a product to add</option>');
+			//notInCollection.unshift('<option value="null">Select a product to add</option>');
 
 			//console.log(productTitles);
 
-			document.getElementById('dataDump').innerHTML = productTitles.join('');
+			document.getElementById('dataDump_'+index).innerHTML = productTitles.join('');
 
-			document.getElementById('allOtherProducts').innerHTML = notInCollection.join('');
+			document.getElementById('notInList_'+index).innerHTML = notInCollection.join('');
 
-			var hiddenCollectionIdInputs = document.querySelectorAll('.current-collection-id');
+			var hiddenCollectionIdInputs = document.querySelectorAll('.current-collection-id-'+index);
 			if(hiddenCollectionIdInputs.length){
 				for (var j = 0; j < hiddenCollectionIdInputs.length; j++) {
 					hiddenCollectionIdInputs[j].value = collection_id;
@@ -134,12 +154,29 @@ function dataSplit(stringData){
 var collectionChange = function(e){
 	var select = this,
 		collection_id = this.value;
-	getCollectionProducts(collection_id);
+		index = this.getAttribute('data-index');
+	getCollectionProducts(collection_id, index);
 };
 
 var getAllCollectionOptions = function(){
-	var select = document.querySelector('#collectionName'),
-		setupComplete = document.querySelector('#setupComplete'),
+	var selects = document.querySelectorAll('.collection-name');
+	if(!!selects.length){
+		for (var i = 0; i < selects.length; i++) {
+			let select = selects[i];
+			getCollectionOptions(select);
+		}
+	}
+	else {
+		var setupComplete = document.querySelector('#setupComplete');
+		if(!!setupComplete){
+			setupComplete.classList.remove('hidden');
+		}
+	}
+	return selects;
+};
+
+var getCollectionOptions = function(select){
+	var setupComplete = document.querySelector('#setupComplete'),
 		options = [];
 
 
@@ -175,6 +212,7 @@ var getAllCollectionOptions = function(){
 	}
 	else if(!!setupComplete){
 		setupComplete.classList.remove('hidden');
+		getCollectionProducts(select.value, select.getAttribute('data-index'));
 	}
 
 	if(!!select){
@@ -215,10 +253,11 @@ function submitConfig(e){
 	});
 }
 
-var collectionForm = document.querySelector('#newCollection');
-if(!!collectionForm){
-	collectionForm.addEventListener('submit', createNewCollection);
-}
+// var collectionForm = document.querySelector('#newCollection');
+// if(!!collectionForm){
+// 	collectionForm.addEventListener('submit', createNewCollection);
+// }
+attachEvent('.new-collection', 'submit', createNewCollection);
 
 function createNewCollection(e){
 	e.preventDefault();
@@ -248,10 +287,8 @@ function createNewCollection(e){
 	});
 }
 
-var productForm = document.querySelector('#newProduct');
-if(!!productForm){
-	productForm.addEventListener('submit', createNewProduct);
-}
+//
+attachEvent('.new-product', 'submit', createNewProduct);
 
 function createNewProduct(e){
 	e.preventDefault();
@@ -275,19 +312,36 @@ function createNewProduct(e){
 		let product = returnedJson[1];
 		//console.log(product);
 		if(!!product){
-			getCollectionProducts(json['collection_id']);
+			getCollectionProducts(json['collection_id'], this.getAttribute('data-index'));
 		}
 	});
 }
 
-var productToCollection = document.querySelector('#addProduct');
-if(!!productToCollection){
-	productToCollection.addEventListener('submit', changeCollection);
+// var productToCollections = document.querySelector('#addProduct');
+// if(!!productToCollections.length){
+// 	for (var i = 0; i < productToCollections.length; i++) {
+// 		productToCollections[i].addEventListener('submit', changeCollection);
+// 	}
+// }
+
+attachEvent('.add-to', 'click', pidUpdateAndSubmit);
+
+function pidUpdateAndSubmit(e){
+	var target = e.target,
+		p_id = target.getAttribute('data-id'),
+		index = target.parentElement.parentElement.parentElement.getAttribute('data-index');
+	var form = document.querySelector('#allOtherProducts_'+index);
+	if(!!form && !!form.submit){
+		form.submit();
+	}
 }
+
+attachEvent('.add-product', 'submit', changeCollection);
 
 function changeCollection(e) {
 	e.preventDefault();
-	var formData = new FormData(this),
+	var target = e.target,
+		index = target.getAttribute('data-index'),
 		json = {};
 
 	for(let p of formData){
@@ -307,20 +361,22 @@ function changeCollection(e) {
 		let collect = returnedJson[1];
 		console.log(collect);
 		if(!!collect){
-			getCollectionProducts(json['collection_id']);
+			getCollectionProducts(json['collection_id'], index);
 		}
 	});
 }
 
-var listWrapper = document.querySelector('#dataDump');
-if(!!listWrapper){
-	listWrapper.addEventListener('click', updateProduct);
-}
+// var listWrapper = document.querySelector('#dataDump');
+// if(!!listWrapper){
+// 	listWrapper.addEventListener('click', updateProduct);
+// }
+attachEvent('.data-list', 'click', updateProduct);
 
 function updateProduct(e){
 	e.preventDefault();
 	var target = e.target,
-		product_id = target.classList.contains('update-data') ? Number(target.getAttribute('data-id')): 0;
+		product_id = target.classList.contains('update-data') ? Number(target.getAttribute('data-id')): 0,
+		index = target.getAttribute('data-index');
 
 	if(!!product_id){
 		$.ajax({
@@ -335,7 +391,7 @@ function updateProduct(e){
 
 			let product = returnedJson[1];
 			if(!!product){
-				getCollectionProducts(document.querySelector('#collectionName').value);
+				getCollectionProducts(document.querySelector('#collectionName_'+index).value, index);
 			}
 		});
 	}

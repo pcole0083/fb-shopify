@@ -60,7 +60,7 @@ videoRouter
 	});
 
 videoRouter
-	.route('/:id')
+	.route('/update/:id')
 	.post(urlencode, (request, response) => {
 		var opts = request.body;
 		let fbVideos = FBAPI.getRef(creatRefUrl(request, 'videos/'+request.params.id));

@@ -1,5 +1,57 @@
-<div class="col-xs-3">
+<style>
+    @media (max-width: 767px) {
+        .menu-toggle {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 10;
+            width: 200px;
+            height: 20px;
+            display: block;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .shop-sidebar.affix {
+            top: 0;
+            bottom: 0;
+            right: -200px;
+            min-width: 200px;
+
+            padding: 20px;
+
+            background: rgba(255,255,255,0.8);
+            transition: 300ms transform linear 50ms;
+        }
+
+        .menu-toggle + .shop-sidebar.affix .hamburger-bun {
+            width: 20px;
+            border:  1px solid #000;
+            text-align: center;
+            position: absolute;
+            top:  5px;
+            left:  0;
+            transform: translateX(-20px);
+            transition: 300ms transform linear 50ms, 300ms border-color linear 50ms;
+        }
+
+        .menu-toggle:checked + .shop-sidebar.affix{
+            transform: translateX(-200px);
+        }
+
+        .menu-toggle:checked + .shop-sidebar.affix .hamburger-bun {
+            transform: translateX(0);
+            border-color:  transparent;
+        }
+    }
+    
+</style>
+<div class="col-sm-3">
+    <input type="checkbox" class="menu-toggle visible-xs-block" />
     <nav class="shop-sidebar affix">
+        <div class="hamburger-bun visible-xs-block">
+            <span class="glyphicon glyphicon-option-vertical"></span>
+        </div>
         <ul class="nav nav-sidebar">
             <li><h4>Welcome User</h4></li>
             <li>

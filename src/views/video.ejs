@@ -2,10 +2,24 @@
 <style>
     .dashed-wrapper { padding: 10px 0; border: 3px dashed #ccc; }
     .ordered-list-group-item { display: list-item;clear: both; }
-    .ordered-list-group-item > .row { display: inline-block; }
+    .ordered-list-group-item > .row { /* display: inline-block; */ clear: both; }
+    .update-data .glyphicon, .remove-product .glyphicon { top: 2px; }
+    @media (min-width: 768px) and (max-width: 991px){
+        .data-list .list-group-item { position: relative; }
+        .data-list .list-group-item > p { width: calc(100% - 20px); }
+        .data-list .list-group-item > p:first-child:last-child { margin:0; }
+        .data-list .list-group-item > p .btn:last-child {
+            position: absolute;
+            top: 10px;
+            right: 5px;
+        }
+        .data-list .list-group-item > p .btn:last-child .glyphicon-plus {
+            left: 1px;
+        }
+    }
 </style>
 <div id="setupComplete" class="row hidden">
-    <div class="col-xs-9">
+    <div class="col-sm-9">
         <h2>Video Commerce</h2>
         <div class="well well-lg">
             <div class="row">
@@ -16,7 +30,7 @@
             </div>
             <hr>
             <ol class="list-group">
-                <% videos.forEach(function(video) { %>
+                <% videos.forEach(function(video, $i) { %>
                     <li class="ordered-list-group-item list-group-item">
                         <div class="row">
                             <div class="col-sm-6">
@@ -40,7 +54,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <h4>Select a Collection</h4>
-                                <select id="collectionName" class="form-control" name="collection_name" data-selected="<%= video.collection_id %>">
+                                <select id="collectionName_<%= $i %>" class="form-control collection-name" name="collection_name" data-index="<%= $i %>" data-selected="<%= video.collection_id %>">
                                     <option value="null">Please select a collection</option>
                                     <% collections.forEach(function(collection) { %>
                                         <% if(Number(collection.id) === Number(video.collection_id)){ %>
@@ -53,7 +67,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <h4>Create a new Collection</h4>
-                                <form id="newCollection">
+                                <form id="newCollection_<%= $i %>" class="new-collection" data-index="<%= $i %>">
                                     <div class="input-group">
                                         <input name="collection_name_new" placeholder="Collection Name" class="form-control" />
                                         <span class="input-group-btn"><button type="submit" class="btn btn-primary">Create</button></span>
@@ -64,9 +78,9 @@
                         <div class="row existing-producs">
                             <div class="col-sm-6">
                                 <h4>Products</h4>
-                                <ul id='dataDump' class="list-group"><li class="list-group-item disabled">Select a Collection</li></ul>
-                                <form id="newProduct">
-                                    <input class="current-collection-id" type="hidden" name="collection_id" value="" />
+                                <ul id="dataDump_<%= $i %>" class="list-group data-list" data-index="<%= $i %>"><li class="list-group-item disabled">Select a Collection</li></ul>
+                                <form id="newProduct_<%= $i %>" class="new-product" data-index="<%= $i %>">
+                                    <input class="current-collection-id-<%= $i %>" type="hidden" name="collection_id" value="<%= video.collection_id %>" />
                                     <div class="input-group">
                                         <input name="product_name" placeholder="Product Name" class="form-control" />
                                         <span class="input-group-btn"><button type="submit" class="btn btn-primary">Create New Product</button></span>
@@ -75,26 +89,21 @@
                             </div>
                             <div class="col-sm-6">
                                 <h4>Add Product to Collection</h4>
-                                <form id="addProduct">
-                                    <input class="current-collection-id" type="hidden" name="collection_id" value="" />
-                                    <div class="input-group">
-                                        <select id="allOtherProducts" class="form-control" name="product_id">
-                                            <option value="null">Select a product to add</option>
-                                        </select>
-                                        <span class="input-group-btn">
-                                            <button type="submit" class="btn btn-primary">Add</button>
-                                        </span>
-                                    </div>
+                                <ul id="notInList_<%= $i %>" class="list-group data-list" data-index="<%= $i %>"><li class="list-group-item disabled">Select a Collection</li></ul>
+                                <form id="allOtherProducts_<%= $i %>" class="add-product hidden" method="post" action="#">
+                                    <input class="current-collection-id-<%= $i %>" type="hidden" name="collection_id" value="<%= video.collection_id %>" />
+                                    <input class="current-product-id-<%= $i %>" type="hidden" name="product_id" value="" />
                                 </form>
                             </div>
                         </div>
+                        <hr>
                         <div class="row">
-                            <div class="col-xs-3 col-xs-offset-9">
-                                <form action="/video/<%= video.id %>" method="post">
-                                    <input class="current-collection-id" type="hidden" name="collection_id" value="<%= video.collection_id %>" />
+                            <div class="col-xs-4 col-xs-offset-4">
+                                <form action="/video/update/<%= video.id %>" method="post">
+                                    <input class="current-collection-id-<%= $i %>" type="hidden" name="collection_id" value="<%= video.collection_id %>" />
                                     <input class="video-type" type="hidden" name="type" value="<%= video.type %>" />
                                     <input class="video-id" type="hidden" name="video_id" value="<%= video.video_id %>" />
-                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block">Update</button>
                                 </form>
                             </div>
                         </div>
