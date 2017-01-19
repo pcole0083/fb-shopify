@@ -60,7 +60,7 @@ function productListDisplayTemplate(product, index){
 	}
 
 	var template = '<li class="list-group-item">'+
-	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}" data-index={{index}}>'+
+	'<p><span class="title">{{title}}</span> <button class="btn btn-info btn-xs update-data" data-id="{{id}}" data-index={{index}}>'+
 	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
 	'<button class="btn btn-danger btn-xs pull-right remove-product" data-id="{{id}}" data-index={{index}}><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></p>'+
 	'<div class="input-group">'+
@@ -79,7 +79,7 @@ function notInCollectionTemplate(product, index){
 	}
 
 	var template = '<li class="list-group-item">'+
-	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}" data-index={{index}}>'+
+	'<p><span class="title">{{title}}</span> <button class="btn btn-info btn-xs update-data" data-id="{{id}}" data-index={{index}}>'+
 	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
 	'<button class="btn btn-default btn-xs pull-right add-to" data-id="{{id}}" data-index={{index}}><i class="glyphicon glyphicon-plus"></i><span class="visible-lg-inline"> Add to Collection</span></button></p>'+
 	'</li>';
