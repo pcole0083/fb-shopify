@@ -53,28 +53,38 @@ var checkFirebaseCreds = (function(){
 // 	});
 // }());
 
-function productListDisplayTemplate(product){
+function productListDisplayTemplate(product, index){
+	if(!product || !index){
+		console.error('Product and index required!');
+		return '';
+	}
+
 	var template = '<li class="list-group-item">'+
-	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}">'+
+	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}" data-index={{index}}>'+
 	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
-	'<button class="btn btn-danger btn-xs pull-right remove-product" data-id="{{id}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></p>'+
+	'<button class="btn btn-danger btn-xs pull-right remove-product" data-id="{{id}}" data-index={{index}}><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></p>'+
 	'<div class="input-group">'+
 	'<span class="input-group-addon">Show at</span>'+
 	'<input class="form-control" type="text" name="show_at" placeholder="Example: 1:00" data-id="{{id}}" value="{{show_at}}" />'+
 	'</div>'+
 	'</li>';
 
-	return template.replace('{{title}}', product.title).replace(/{{id}}/gi, product.id).replace('{{show_at}}', product.show_at || '');
+	return template.replace('{{title}}', product.title).replace(/{{id}}/gi, product.id).replace('{{index}}', index).replace('{{show_at}}', product.show_at || '');
 };
 
-function notInCollectionTemplate(product){
+function notInCollectionTemplate(product, index){
+	if(!product || !index){
+		console.error('Product and index required!');
+		return '';
+	}
+
 	var template = '<li class="list-group-item">'+
-	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}">'+
+	'<p>{{title}} <button class="btn btn-info btn-xs update-data" data-id="{{id}}" data-index={{index}}>'+
 	'<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>'+
-	'<button class="btn btn-default btn-xs pull-right add-to" data-id="{{id}}"><i class="glyphicon glyphicon-plus"></i><span class="visible-lg-inline"> Add to Collection</span></button></p>'+
+	'<button class="btn btn-default btn-xs pull-right add-to" data-id="{{id}}" data-index={{index}}><i class="glyphicon glyphicon-plus"></i><span class="visible-lg-inline"> Add to Collection</span></button></p>'+
 	'</li>';
 
-	return template.replace('{{title}}', product.title).replace(/{{id}}/gi, product.id);
+	return template.replace('{{title}}', product.title).replace(/{{id}}/gi, product.id).replace('{{index}}', index);
 };
 
 function getCollectionProducts(collection_id, index){
@@ -107,11 +117,11 @@ function getCollectionProducts(collection_id, index){
 			});
 
 			var productTitles = !!products.length ? products.map((product) => {
-				return productListDisplayTemplate(product);
+				return productListDisplayTemplate(product, index);
 			}) : ['<li class="list-group-item">No products found for this collection.</li>'];
 
 			var notInCollection = !!not_in.length ? not_in.map((product) => {
-				return notInCollectionTemplate(product);
+				return notInCollectionTemplate(product, index);
 			}) : ['<li class="list-group-item">No products more products to add.</li>'];
 
 			//notInCollection.unshift('<option value="null">Select a product to add</option>');
@@ -378,7 +388,7 @@ function updateProduct(e){
 		product_id = target.classList.contains('update-data') ? Number(target.getAttribute('data-id')): 0,
 		index = target.getAttribute('data-index');
 
-	if(!!product_id){
+	if(!!product_id && index !== null && !isNaN(Number(index)) ){
 		$.ajax({
 			url: './products/update',
 			type: 'POST',
