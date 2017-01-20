@@ -10,7 +10,8 @@ testingRouter
 	.all((request, response) => {
 		if(!!request.session && !!request.session.authData){
 			//need to check if auth rejected or expired.
-			response.sendFile('testing.html', { root: path.resolve(__dirname, '../../views')});
+			//response.sendFile('testing.html', { root: path.resolve(__dirname, '../../views')});
+			response.render('testing', {});
 		}
 		else {
 			response.redirect('./auth');

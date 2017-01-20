@@ -1,0 +1,123 @@
+<% include ./partials/head %>
+<style>
+    .dashed-wrapper { padding: 10px 0; border: 3px dashed #ccc; }
+    .ordered-list-group-item { display: list-item;clear: both; }
+    .ordered-list-group-item > .row { /* display: inline-block; */ clear: both; }
+    .update-data .glyphicon, .remove-product .glyphicon { top: 2px; }
+    .data-list .list-group-item > p .title { display: inline-block; max-width: calc(100% - 150px); }
+    .data-list .list-group-item > p .title + .btn-xs { vertical-align: top; }
+    #slideType { text-transform: capitalize; }
+    .drag-bar {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        height: 100%;
+        background-color: #ccc;
+        /* line-height: 162px; */
+        padding: 0 7px;
+        z-index: 2;
+    }
+    .drag-bar .glyphicon {
+        color:  #555;
+        font-size: 20px;
+
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .slides-list .slide-item {
+        padding-left: 48px;
+    }
+    @media (min-width: 768px) and (max-width: 991px){
+        .data-list .list-group-item { position: relative; }
+        .data-list .list-group-item > p { width: calc(100% - 20px); }
+        .data-list .list-group-item > p:first-child:last-child { margin:0; }
+        .data-list .list-group-item > p .btn:last-child {
+            position: absolute;
+            top: 10px;
+            right: 5px;
+        }
+        .data-list .list-group-item > p .btn:last-child .glyphicon-plus {
+            left: 1px;
+        }
+    }
+</style>
+<div id="setupComplete" class="row hidden">
+    <div class="col-sm-9">
+        <h2>Theme Slider</h2>
+        <div class="well well-lg">
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3 dashed-wrapper">
+                    <h4 class="text-center">Create a new Slider</h4>
+                    <form action="/slider/new" method="post"><p class="text-center"><button type="submit" class="btn btn-primary">Begin</button></p></form>
+                </div>
+            </div>
+            <hr>
+            <% if(!!sliders && !!sliders.length) { %>
+            <ol class="list-group">
+                <% sliders.forEach(function($slider, $i) { %>
+                    <li class="ordered-list-group-item list-group-item">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h4>Choose Slider Layout</h4>
+                                <select id="sliderType" class="form-control" name="slider_layout">
+                                    <option value="hero">Hero (Full-width)</option>
+                                    <option value="block">Block</option>
+                                    <option value="inline">Inline</option>
+                                    <option value="collection">Collection</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-10 col-sm-offset-1">
+                                <h4>Slides</h4>
+                                <hr>
+                                <% if ($slider.slides.length) { %>
+                                    <ol class="list-group slides-list">
+                                    <% $slider.slides.forEach(function($slide, $n) { %>
+                                        <li class="ordered-list-group-item list-group-item slide-item">
+                                            <h5>Choose Slide Type</h5>
+                                            <select id="slideType" class="form-control" name="slide_type">
+                                                <% slide_global.types.forEach(function($slideType) { %>
+                                                <option value="<%= $slideType %>"><%= $slideType %></option>
+                                                <% }); %>
+                                            </select>
+                                            <h5>Slide Speed</h5>
+                                            <div class="input-group">
+                                                <input name="slide_speed" placeholder="5" class="form-control" value="<%= $slide.slide_speed %>" />
+                                                <span class="input-group-addon">seconds</span>
+                                            </div>
+                                            <input type="hidden" name="slide_position" value="<% $n %>" calss="slide-position" />
+                                            <div class="drag-bar bar-left"><span class="glyphicon glyphicon-move"></span></div>
+                                        </li>
+                                    <% }); %>
+                                    </ol>
+                                <% } %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-4">
+                                <form action="/slider/update/<%= $slider.id %>" method="post">
+                                    <input class="current-collection-id-<%= $i %>" type="hidden" name="collection_id" value="<%= $slider.collection_id %>" />
+                                    <input class="slider-type" type="hidden" name="type" value="<%= $slider.type %>" />
+                                    <input class="slider-id" type="hidden" name="slider_id" value="<%= $slider.slider_id %>" />
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-disabled btn-lg preview-show" data-id="<%= $i %>" disabled>Preview</button>
+                                        <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                <% }); %>
+            </ol>
+            <% } %>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>
