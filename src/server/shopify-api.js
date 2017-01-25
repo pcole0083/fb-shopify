@@ -256,6 +256,127 @@ const setProduct = (shopify, product_options, collectionId, callback) => {
 };
 
 /**
+ * Theme
+ */
+
+const getActiveTheme = (shopify) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	return shopify.theme.list({'limit': 10})
+		.then(themes => {
+			return themes.find(theme => {
+				return theme.role === 'main';
+			});
+		})
+		.catch(err => {
+			logError('shopify', {'getActiveTheme': err});
+			callback({'error': err});
+		});
+};
+
+const getThemeById = (shopify, id, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	if(!callback){
+		callback = noop;
+	}
+
+	return shopify.theme.get(id)
+		.then(theme => {
+			return callback(theme);
+		})
+		.catch(err => {
+			logError('shopify', {'getThemeById': err});
+			callback({'error': err});
+		});
+};
+
+/**
+ * Assets
+ */
+
+/**
+ * [description]
+ * @param  {[type]}   shopify  [description]
+ * @param  {Number}   theme_id e.g. 828155753
+ * @param  {STRING path}   key      e.g. 'templates/index.liquid'
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+const getSingleAsset = (shopify, theme_id, key, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	if(!callback){
+		callback = noop;
+	}
+
+	return shopify.asset.get(theme_id, {
+			'asset': { key: key },
+			'theme_id': +theme_id //cast to Number or NaN
+		})
+		.then(asset => {
+			return callback(asset);
+		})
+		.catch(err => {
+			logError('shopify', {'getSingleAsset': err});
+			callback({'error': err});
+		});
+};
+
+const getFilteredAssets = (shopify, theme_id, params, filter, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	if(!callback){
+		callback = noop;
+	}
+
+	return shopify.asset.list(theme_id, params)
+		.then(assets => {
+			let fetchedAssets = assets.filter(asset => {
+				return !!~asset.key.indexOf(filter); //return true if /search exists in the string
+			});
+
+			let filteredAssets = fetchedAssets.map(asset => {
+				return getSingleAsset(shopify, theme_id, asset.key);
+			});
+
+			return Promise.all(filteredAssets);
+		})
+		.catch(err => {
+			logError('shopify', {'getSingleAsset': err});
+			callback({'error': err});
+		});
+};
+
+
+const setSearchAsset = (shopify, theme_id, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	if(!callback){
+		callback = noop;
+	}
+
+	return shopify.asset.update(theme_id, params)
+		.then(asset => {
+			callback(asset);
+		})
+		.catch(err => {
+			logError('shopify', {'setSearchAsset': err});
+			callback({'error': err});
+		});
+};
+
+/**
  * Recurring Billing Charge
  */
 
@@ -311,7 +432,12 @@ var SHAPI = (function(){
 		setProduct: setProduct,
 		getChargeById: getChargeById,
 		addRecurringCharge: addRecurringCharge,
-		startRecurringCharge: startRecurringCharge
+		startRecurringCharge: startRecurringCharge,
+		getActiveTheme: getActiveTheme,
+		getThemeById: getThemeById,
+		getSingleAsset: getSingleAsset,
+		getFilteredAssets: getFilteredAssets,
+		setSearchAsset: setSearchAsset
 	};
 }());
 

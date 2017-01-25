@@ -1,0 +1,90 @@
+<% include ./partials/head %>
+<style>
+    .dashed-wrapper { padding: 10px 0; border: 3px dashed #ccc; }
+    .ordered-list-group-item { display: list-item;clear: both; }
+    .ordered-list-group-item > .row { /* display: inline-block; */ clear: both; }
+    .update-data .glyphicon, .remove-product .glyphicon { top: 2px; }
+    .data-list .list-group-item > p .title { display: inline-block; max-width: calc(100% - 150px); }
+    .data-list .list-group-item > p .title + .btn-xs { vertical-align: top; }
+    #slideType { text-transform: capitalize; }
+    .drag-bar {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        height: 100%;
+        background-color: #ccc;
+        /* line-height: 162px; */
+        padding: 0 7px;
+        z-index: 2;
+    }
+    .drag-bar .glyphicon {
+        color:  #555;
+        font-size: 20px;
+
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .slides-list .slide-item {
+        padding-left: 48px;
+    }
+    @media (min-width: 768px) and (max-width: 991px){
+        .data-list .list-group-item { position: relative; }
+        .data-list .list-group-item > p { width: calc(100% - 20px); }
+        .data-list .list-group-item > p:first-child:last-child { margin:0; }
+        .data-list .list-group-item > p .btn:last-child {
+            position: absolute;
+            top: 10px;
+            right: 5px;
+        }
+        .data-list .list-group-item > p .btn:last-child .glyphicon-plus {
+            left: 1px;
+        }
+    }
+</style>
+<div id="setupComplete" class="row hidden">
+    <div class="col-sm-9">
+        <h2>Search Indexes</h2>
+        <div class="well well-lg">
+            <% if(!!assets && !!assets.length) { %>
+            <ol class="list-group">
+                <% assets.forEach(function($asset, $i) { %>
+                    <li class="ordered-list-group-item list-group-item">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h4><%= $asset.key %></h4>
+                                <% if($asset.public_url) { %>
+                                    <p><a href="<%= $asset.public_url %>"><%= $asset.public_url %></a></p>
+                                <% } %>
+                                <% if($asset.value) { %>
+                                    <p><textarea name="asset_value" rows="12" col="12"><%= $asset.value %></textarea></p>
+                                <% } %>
+                                <% if($asset.attachment) { %>
+                                    <p><textarea name="asset_attachment" rows="12" col="12"><%= $asset.attachment %></textarea></p>
+                                <% } %>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-4">
+                                <form action="/search/update/<%= $asset.id %>" method="post">
+                                    <input class="current-theme-id-<%= $i %>" type="hidden" name="theme_id" value="<%= $asset.theme_id %>" />
+                                    <input class="asset-type" type="hidden" name="type" value="<%= $asset.type %>" />
+                                    <input class="asset-id" type="hidden" name="asset_id" value="<%= $asset.key %>" />
+                                    <div class="btn-group">
+                                        <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                <% }); %>
+            </ol>
+            <% } %>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>
