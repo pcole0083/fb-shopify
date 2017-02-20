@@ -442,7 +442,7 @@ const getAllOrders = (shopify, params, callback) => {
 		});
 };
 
-const getProductMeta = (shopify, params, callback) => {
+const getAllMeta = (shopify, params, callback) => {
 	if(!shopify){
 		return noInstance;
 	}
@@ -451,14 +451,35 @@ const getProductMeta = (shopify, params, callback) => {
 		return {'error': "Error no params"};
 	}
 
-	return shopify.metafield.get(params)
+	return shopify.metafield.list(params)
 		.then(metafields => {
 			if(!!callback){
 				callback(metafields);
 			}
 		})
 		.catch(err => {
-			logError('shopify', {'getProductMeta': err});
+			logError('shopify', {'getAllMeta': err});
+			callback({'error': err});
+		});
+};
+
+const getMetaById = (shopify, id, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	if(!params){
+		return {'error': "Error no params"};
+	}
+
+	return shopify.metafield.get(id, params)
+		.then(metafields => {
+			if(!!callback){
+				callback(metafields);
+			}
+		})
+		.catch(err => {
+			logError('shopify', {'getMetaById': err});
 			callback({'error': err});
 		});
 };
@@ -483,7 +504,8 @@ var SHAPI = (function(){
 		getFilteredAssets: getFilteredAssets,
 		setSearchAsset: setSearchAsset,
 		getAllOrders: getAllOrders,
-		getProductMeta: getProductMeta
+		getAllMeta: getAllMeta,
+		getMetaById: getMetaById
 	};
 }());
 
