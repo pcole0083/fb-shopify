@@ -16,7 +16,7 @@ const noop = function(data){
  *
  * Private App:
  * 		{
- *		  	shopName: 'pixafly',
+ *		   shopName: 'pixafly',
  *		   apiKey: '3ed6e3ec6eff83ab71bb9750ca18467d',
  *		   password: '7b646a123067955c0b73c08778ab9944'
  *		}
@@ -419,6 +419,50 @@ const startRecurringCharge = (shopify, id, params, callback) => {
 		});
 };
 
+const getAllOrders = (shopify, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	if(!params){
+		params = {
+			'updated_at_min': "2016-12-31 23:59:59 GTM -05:00"
+		};
+	}
+
+	return shopify.order.list(params)
+		.then(orders => {
+			if(!!callback){
+				callback(orders);
+			}
+		})
+		.catch(err => {
+			logError('shopify', {'getAllOrders': err});
+			callback({'error': err});
+		});
+};
+
+const getProductMeta = (shopify, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+
+	if(!params){
+		return {'error': "Error no params"};
+	}
+
+	return shopify.metafield.get(params)
+		.then(metafields => {
+			if(!!callback){
+				callback(metafields);
+			}
+		})
+		.catch(err => {
+			logError('shopify', {'getProductMeta': err});
+			callback({'error': err});
+		});
+};
+
 var SHAPI = (function(){
 	return {
 		getInstance: getInstance,
@@ -437,7 +481,9 @@ var SHAPI = (function(){
 		getThemeById: getThemeById,
 		getSingleAsset: getSingleAsset,
 		getFilteredAssets: getFilteredAssets,
-		setSearchAsset: setSearchAsset
+		setSearchAsset: setSearchAsset,
+		getAllOrders: getAllOrders,
+		getProductMeta: getProductMeta
 	};
 }());
 
