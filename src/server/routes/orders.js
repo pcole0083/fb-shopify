@@ -13,12 +13,21 @@ const fbProducts 	= FBAPI.getRef('shopify/products');
 
 ordersRouter
 	.route('/')
-	.get( (request, response) => {
-		SHAPI
-			.getAllOrders(SHAPI.getInstance(request), null, (orders) => {
-				console.log(orders);
-				return response.status(200).json(orders);
-			});
+	.get(urlencode, (request, response) => {
+		if(!!request.session && !!request.session.authData){
+			SHAPI
+				.getAllOrders(SHAPI.getInstance(request), null, (orders) => {
+					//console.log(orders);
+					response.render('orders', {
+						orders: orders,
+						name: 'orders',
+						length: orders.length
+					});
+				});
+		}
+		else {
+			response.redirect('./auth');
+		}
 	});
 
 export default ordersRouter;

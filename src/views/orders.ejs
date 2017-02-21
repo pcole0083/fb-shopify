@@ -1,0 +1,127 @@
+<% include ./partials/head %>
+<style>
+    .dashed-wrapper { padding: 10px 0; border: 3px dashed #ccc; }
+    .ordered-list-group-item { display: list-item;clear: both; }
+    .ordered-list-group-item > .row { /* display: inline-block; */ clear: both; }
+    .update-data .glyphicon, .remove-product .glyphicon { top: 2px; }
+    .data-list .list-group-item > p .title { display: inline-block; max-width: calc(100% - 150px); }
+    .data-list .list-group-item > p .title + .btn-xs { vertical-align: top; }
+    #slideType { text-transform: capitalize; }
+    .drag-bar {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        height: 100%;
+        background-color: #ccc;
+        /* line-height: 162px; */
+        padding: 0 7px;
+        z-index: 2;
+    }
+    .drag-bar .glyphicon {
+        color:  #555;
+        font-size: 20px;
+
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .slides-list .slide-item {
+        padding-left: 48px;
+    }
+    .address-row-input {
+        overflow: hidden;
+    }
+    .address-row-input input {
+        width: 100%;
+    }
+    .address-row-label {
+        text-transform: capitalize;
+    }
+
+    @media (min-width: 768px) and (max-width: 991px){
+        .data-list .list-group-item { position: relative; }
+        .data-list .list-group-item > p { width: calc(100% - 20px); }
+        .data-list .list-group-item > p:first-child:last-child { margin:0; }
+        .data-list .list-group-item > p .btn:last-child {
+            position: absolute;
+            top: 10px;
+            right: 5px;
+        }
+        .data-list .list-group-item > p .btn:last-child .glyphicon-plus {
+            left: 1px;
+        }
+    }
+</style>
+<div id="setupComplete" class="row hidden">
+    <div class="col-sm-9">
+        <h2>All Orders</h2>
+        <div class="well well-lg">
+            <% if(!!orders && !!orders.length) { %>
+            <ol class="list-group">
+                <% orders.forEach(function($order, $i) { %>
+                    <li class="ordered-list-group-item list-group-item">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2>
+                                <% if($order.order_status_url) { %>
+                                    <a href="<%= $order.order_status_url %>"><%= $order.name %></a>
+                                <% } else { %>
+                                    <%= $order.name %>
+                                <% } %>
+                                </h2>
+                                <% if($order.processed_at) { %>
+                                    <div class="row">
+                                        <div class="col-sm-3"><strong>Processed at:</strong></div>
+                                        <div class="col-sm-9"><%= $order.processed_at %></div>
+                                    </div>
+                                <% } %>
+                                <% if($order.total_price) { %>
+                                    <div class="row">
+                                        <div class="col-sm-3"><strong>Total Price:</strong></div>
+                                        <div class="col-sm-9"><%= $order.total_price %></div>
+                                    </div>
+                                <% } %>
+                                <% if($order.total_discounts) { %>
+                                    <div class="row">
+                                        <div class="col-sm-3"><strong>Discounts:</strong></div>
+                                        <div class="col-sm-9"><%= $order.total_discounts %></div>
+                                    </div>
+                                <% } %>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                    <% if($order.billing_address) { %>
+                                        <h3>Billing Address</h3>
+                                        <% Object.keys($order.billing_address).forEach(function($bk){ %>
+                                            <div class="row address-row">
+                                                <div class="col-xs-5 address-row-label"><%= $bk.replace('_', ' ') %>:</div>
+                                                <div class="col-xs-7 address-row-input"><input type="text" name="<%= $bk %>" value="<%= $order.billing_address[$bk] %>" /></div>
+                                            </div>
+                                        <% }); %>
+                                    <% } %>
+                                    </div>
+                                    <div class="col-sm-6">
+                                    <% if($order.shipping_address) { %>
+                                        <h3>Shipping Address</h3>
+                                        <% Object.keys($order.shipping_address).forEach(function($sk){ %>
+                                            <div class="row address-row">
+                                                <div class="col-xs-5 address-row-label"><%= $sk.replace('_', ' ') %>:</div>
+                                                <div class="col-xs-7 address-row-input"><input type="text" name="<%= $sk %>" value="<%= $order.shipping_address[$sk] %>" /></div>
+                                            </div>
+                                        <% }); %>
+                                    <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </li>
+                <% }); %>
+            </ol>
+            <% } %>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>
