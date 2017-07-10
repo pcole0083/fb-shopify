@@ -16,7 +16,7 @@ ordersRouter
 	.get( (request, response) => {
 		SHAPI
 			.getAllOrders(SHAPI.getInstance(request), null, (orders) => {
-				console.log(orders);
+				//console.log(orders);
 				return response.status(200).json(orders);
 			});
 	});

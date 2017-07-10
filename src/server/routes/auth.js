@@ -29,7 +29,7 @@ var verifyShopify = function(request, response, next) {
 var setShopifySession = function(request, response) {
 	let authData = request.authData;
 
-	const shopify = new Shopify({
+	let shopify = new Shopify({
 		shopName: authData.shopName,
 		accessToken: authData.accessToken
 	});
@@ -39,6 +39,7 @@ var setShopifySession = function(request, response) {
 
 	response.clearCookie('shopname');
 	response.cookie('shopname', authData.shopName); //httpOnly - Flags the cookie to be accessible only by the web server.
+	
 	response.redirect('..');
 };
 
