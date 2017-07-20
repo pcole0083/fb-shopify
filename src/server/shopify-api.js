@@ -5,6 +5,8 @@ const noop = function(data){
 	return data;
 };
 
+const noInstance = {'error': 'Instance of Shopify not found'};
+
 /**
  * Auth
  *
@@ -22,13 +24,16 @@ const noop = function(data){
  *		}
  */
 const getInstance = (request) => {
+	//console.log(request.session.sp_instance);
 	if(!request.session || !request.session.authData){
-		return {'error': 'No session object found!'};
+		return noInstance;
 	}
-	return new Shopify(request.session.authData);
+	
+	request.session.sp_instance = new Shopify(request.session.authData);
+	return request.session.sp_instance;
 };
 
-const noInstance = {'error': 'Instance of Shopify not found'};
+
 
 /**
  * Store
@@ -419,6 +424,9 @@ const startRecurringCharge = (shopify, id, params, callback) => {
 		});
 };
 
+/**
+ * Orders
+ */
 const getAllOrders = (shopify, params, callback) => {
 	if(!shopify){
 		return noInstance;
@@ -442,6 +450,9 @@ const getAllOrders = (shopify, params, callback) => {
 		});
 };
 
+/**
+ * MetaFields
+ */
 const getAllMeta = (shopify, params, callback) => {
 	if(!shopify){
 		return noInstance;
@@ -484,6 +495,59 @@ const getMetaById = (shopify, id, params, callback) => {
 		});
 };
 
+/**
+ * Customer
+ */
+const getCustomerById = (shopify, id, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+	return shopify.customer.get(id, params)
+		.then(customer => {
+			if(!!callback){
+				return callback(customer);
+			}
+			return customer;
+		})
+		.catch(err => {
+			logError('shopify', {'getCustomerById': err});
+			callback({'error': err});
+		});
+};
+
+const getCustomerByEmail = (shopify, email, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+	return shopify.customer.list(params)
+		.then(customers => {
+			if(!!callback){
+				callback(customers);
+			}
+		})
+		.catch(err => {
+			logError('shopify', {'getCustomerByEmail': err});
+			callback({'error': err});
+		});
+}
+
+const updateCustomer = (shopify, id, params, callback) => {
+	if(!shopify){
+		return noInstance;
+	}
+	return shopify.customer.update(id, params)
+		.then(customer => {
+			if(!!callback){
+				callback(customer);
+			}
+		})
+		.catch(err => {
+			console.log(err);
+			logError('shopify', {'updateCustomer': err});
+			callback({'error': err});
+		});
+};
+
 var SHAPI = (function(){
 	return {
 		getInstance: getInstance,
@@ -505,7 +569,10 @@ var SHAPI = (function(){
 		setSearchAsset: setSearchAsset,
 		getAllOrders: getAllOrders,
 		getAllMeta: getAllMeta,
-		getMetaById: getMetaById
+		getMetaById: getMetaById,
+		getCustomerById: getCustomerById,
+		getCustomerByEmail: getCustomerByEmail,
+		updateCustomer: updateCustomer
 	};
 }());
 

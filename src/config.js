@@ -14,7 +14,7 @@ const config = {
 			sharedSecret: '7969310b79a5e99b21349e2097a5ff40',
 			redirectUri: baseUrls['development']+'auth/grant',
 			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
-			scopes: ['write_content', 'write_themes', 'write_products', 'write_script_tags', 'write_themes', 'read_orders', 'write_orders']
+			scopes: ['write_content', 'write_themes', 'write_products', 'write_script_tags', 'write_customers', 'write_orders']
 		},
 		billing: {
 			"name": "Test Charge",

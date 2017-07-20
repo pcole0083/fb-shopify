@@ -407,4 +407,107 @@ function updateProduct(e){
 	}
 }
 
+attachEvent('#getCustomer', 'submit', getCustomer);
+
+function getCustomer(e) {
+	e.preventDefault();
+	var form = this,
+		formData = new FormData(this),
+		json = {};
+
+	for(let p of formData){
+		json[p[0]] = p[1];
+	}
+
+	$.ajax({
+		url: './testing/customer',
+		type: 'POST',
+		dataType: 'json',
+		data: json
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let customer = returnedJson;
+		console.log(customer);
+
+		var pre = document.createElement('pre');
+		pre.innerHTML = JSON.stringify(customer);
+		form.appendChild(pre);
+		
+	}).fail(err => {
+		console.error(err);
+	});
+}
+
+attachEvent('#getCustomerByEmail', 'submit', getCustomerByEmail);
+
+function getCustomerByEmail(e) {
+	e.preventDefault();
+	var form = this,
+		formData = new FormData(this),
+		json = {};
+
+	for(let p of formData){
+		json[p[0]] = p[1];
+	}
+
+	$.ajax({
+		url: './testing/customer/email',
+		type: 'POST',
+		dataType: 'json',
+		data: json
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let customer = returnedJson;
+		console.log(customer);
+		let customerID = document.querySelector('#customerID');
+
+		var pre = document.createElement('pre');
+		pre.innerHTML = JSON.stringify(customer);
+		form.appendChild(pre);
+		customerID.value = customer.id;
+		
+	}).fail(err => {
+		console.error(err);
+	});
+}
+
+attachEvent('#updateCustomer', 'submit', updateCustomer);
+
+function updateCustomer(e) {
+	e.preventDefault();
+	var form = this,
+		formData = new FormData(this),
+		json = {};
+
+	for(let p of formData){
+		json[p[0]] = p[1];
+	}
+
+	$.ajax({
+		url: './testing/customer/update',
+		type: 'POST',
+		dataType: 'json',
+		data: json
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let customer = returnedJson;
+		console.log(customer);
+
+		var pre = document.createElement('pre');
+		pre.innerHTML = JSON.stringify(customer);
+		form.appendChild(pre);
+		
+	}).fail(err => {
+		console.error(err);
+	});
+}
 

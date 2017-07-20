@@ -4,6 +4,26 @@
     <div class="col-sm-9">
         <h2>Test Shopify API Features</h2>
         <div class="well well-lg">
+            <h2>Customer API</h2>
+            <form id="getCustomer">
+                <label>Get Customer By ID</label>
+                <input name="id" placeholder="Customer ID" />
+                <button type="submit" class="btn btn-primary">Get Customer</button>
+            </form>
+            <hr>
+            <form id="getCustomerByEmail">
+                <label>Get Customer By Email</label>
+                <input type="email" tname="email" placeholder="testing@test.com" />
+                <button type="submit" class="btn btn-primary">Get Customer</button>
+            </form>
+            <hr>
+            <form id="updateCustomer">
+                <label>Update Customer Email</label>
+                <input id="customerID" type="hidden" name="id" value="" />
+                <input type="email" name="new_email" placeholder="testing@test.com" />
+                <button type="submit" class="btn btn-primary">Update Email</button>
+            </form>
+            <hr>
             <p>
                 <select id="collectionName" name="collection_name">
                     <option value="null">Please select a collection</option>
