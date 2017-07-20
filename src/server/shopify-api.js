@@ -527,7 +527,9 @@ const getCustomerByEmail = (shopify, email, params, callback) => {
 		})
 		.catch(err => {
 			logError('shopify', {'getCustomerByEmail': err});
-			callback({'error': err});
+			if(!!callback){
+				callback({'error': err});
+			}
 		});
 }
 
@@ -535,16 +537,18 @@ const updateCustomer = (shopify, id, params, callback) => {
 	if(!shopify){
 		return noInstance;
 	}
-	return shopify.customer.update(id, params)
+
+	shopify.customer.update(id, params)
 		.then(customer => {
 			if(!!callback){
 				callback(customer);
 			}
 		})
 		.catch(err => {
-			console.log(err);
 			logError('shopify', {'updateCustomer': err});
-			callback({'error': err});
+			if(!!callback){
+				callback({'error': err});
+			}
 		});
 };
 

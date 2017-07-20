@@ -28,7 +28,7 @@ testingRouter
 		SHAPI.getCustomerById(SHAPI.getInstance(request), _id)
 			.then(customer => {
 				return response.status(200).json(customer);
-			})
+			});
 	});
 
 testingRouter
@@ -43,11 +43,32 @@ testingRouter
 
 testingRouter
 	.route('/customer/update')
-	.post(urlencode, (request, response) => {
-		let id = parseInt(request.body.id, 10);
+	.post(urlencode, (request, response, next) => {
+		let id = Number(request.body.id);
 		let new_email = request.body.new_email;
-		console.log(new_email);
-		SHAPI.updateCustomer(SHAPI.getInstance(request), id, { "id":id,"email":new_email, "note": "Customer updated via API." }, (data) => {
+
+		SHAPI.getCustomerByEmail(SHAPI.getInstance(request), new_email, { 'email': new_email, 'limit': 1}, (customers) => {
+			let customer = customers[0];
+			console.log(customer.id);
+			console.log(customer.email);
+			if(!!customer && customer.id !== id){
+				console.log('Error time');
+				return response.status(200).json({'error': 'This email is already in use.'});
+			}
+			else {
+				next();
+			}
+		});
+	}, (request, response) => {
+		let id = Number(request.body.id);
+		let new_email = request.body.new_email;
+		var update_data = {
+			"id": id,
+			"email": new_email,
+			"note": "Customer updated via API."
+		}; //add old email to meta_data?
+		console.log('Stil made it');
+		SHAPI.updateCustomer(SHAPI.getInstance(request), id, update_data, (data) => {
 			return response.status(200).json(data);
 		});
 	});

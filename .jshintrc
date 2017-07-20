@@ -1,0 +1,7 @@
+{
+    // JSHint Configuration File
+    // See http://jshint.com/docs/ for more details
+
+    "maxerr"        : 100,       // {int} Maximum error before stopping
+    "esversion" 	: 6
+}
