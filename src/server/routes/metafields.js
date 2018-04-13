@@ -8,12 +8,48 @@ const urlencode = bodyParser.urlencoded({ extended: false });
 
 metaRouter
 	.route('/') //9031585357
-	.get( (request, response) => {
-		
-		SHAPI
-			.getAllMeta(SHAPI.getInstance(request), {}, (metafields) => {
-				return response.status(200).json(metafields);
+	.all(urlencode, (request, response, next) => {
+		if(!!request.session && !!request.session.authData){
+			SHAPI
+			.getAllMeta(SHAPI.getInstance(request), {})
+			.then(metafields => {
+				if(!metafields.length){
+					metafields = [{
+						'namespace': 'NULL',
+						'key': 'error',
+						'value': 'No metafields found',
+						'description': ''
+					}];
+				}
+				request.session.metafields = metafields;
+				request.session.error = null;
+				next();
+			})
+			.catch(err => {
+				request.session.customers = [{
+					'namespace': 'NULL',
+					'key': 'error',
+					'value': 'No metafields found',
+					'description': ''
+				}];
+				request.session.error = err;
+				next(); 
 			});
+		}
+		else {
+			return response.redirect(302, '/auth');
+		}
+	})
+	.get( (request, response) => {
+		response.render('metafields', {
+			'error': request.session.error,
+			'name': 'metafields',
+			'metafields': request.session.metafields,
+			'labels': Object.keys(request.session.metafields[0]),
+			'values': Object.keys(request.session.metafields).map(function(key){
+				return request.session.metafields[key];
+			})
+		});
 	});
 
 metaRouter

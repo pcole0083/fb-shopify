@@ -1,5 +1,5 @@
 const baseUrls = {
-	development: 'http://localhost:3030/',
+	development: 'http://dev.pcoleman.com:3030/',
 	staging: 'http://104.131.34.211/',
 	production: 'http://www.product-video-feeds.com/'
 };
@@ -11,10 +11,10 @@ const config = {
         session_secret: '1wEEnAh11',
         redis: {},
         oauth: {
-			sharedSecret: '7969310b79a5e99b21349e2097a5ff40',
+			sharedSecret: '448da957fc13be7e8c761fe0df3a5579',
 			redirectUri: baseUrls['development']+'auth/grant',
-			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
-			scopes: ['write_content', 'write_themes', 'write_products', 'write_script_tags', 'write_customers', 'write_orders']
+			apiKey: '8e9391b0646a2bfed9a9af2f810d3cd5',
+			scopes: ['write_content', 'write_themes', 'write_products', 'write_script_tags', 'read_customers', 'write_customers', 'write_orders']
 		},
 		billing: {
 			"name": "Test Charge",
@@ -31,9 +31,9 @@ const config = {
         session_secret: '1wEEnAh11',
         redis: {},
         oauth: {
-			sharedSecret: '7969310b79a5e99b21349e2097a5ff40',
+			sharedSecret: '448da957fc13be7e8c761fe0df3a5579',
 			redirectUri: baseUrls['staging']+'auth/grant',
-			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
+			apiKey: '8e9391b0646a2bfed9a9af2f810d3cd5',
 			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags', 'read_themes', 'write_themes']
 		},
 		billing: {
@@ -51,9 +51,9 @@ const config = {
         session_secret: '1wEEnAh11',
         redis: {},
         oauth: {
-			sharedSecret: '7969310b79a5e99b21349e2097a5ff40',
+			sharedSecret: '448da957fc13be7e8c761fe0df3a5579',
 			redirectUri: baseUrls['production']+'auth/grant',
-			apiKey: 'db7c687e9e9afbed4cffb118951c7f29',
+			apiKey: '8e9391b0646a2bfed9a9af2f810d3cd5',
 			scopes: ['read_products', 'write_products', 'read_script_tags', 'write_script_tags', 'read_themes', 'write_themes']
 		},
 		billing: {

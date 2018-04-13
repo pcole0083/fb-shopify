@@ -43,18 +43,21 @@ const getStore = (shopify, callback) => {
 	if(!shopify){
 		return noInstance;
 	}
-
-	if(!callback){
-		callback = noop;
-	}
-
 	return shopify.shop.get({
 			fields: ['id', 'name', 'email', 'address1', 'address2', 'city', 'zip', 'country', 'currency', 'plan_name', 'myshopify_domain', 'force_ssl']
 		})
-		.then(store => callback(store))
+		.then(store => {
+			if(!!callback){
+				return callback(store);
+			}
+			return store;
+		})
 		.catch(err => {
 			logError('shopify', {'getStore': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
@@ -80,9 +83,12 @@ const getCollectionById = (shopify, collection_id, number, fields, callback) => 
 			'limit': number || 10,
 			'fields': fields || defaultFields
 		})
-		.then(collection => callback(collection))
+		.then(collection => {
+			return callback(collection);
+		})
 		.catch(err => {
-			logError('shopify', err);
+			logError('getCollectionById', err);
+			return callback({'error': 'Collection ID '+collection_id+' not found.'});
 		});
 };
 const getCollectionByName = (shopify, collection_name, fields, callback) => {
@@ -101,10 +107,12 @@ const getCollectionByName = (shopify, collection_name, fields, callback) => {
 			'title': collection_name,
 			'fields': fields || defaultFields
 		})
-		.then(collection => callback(collection))
+		.then(collection => {
+			return callback(collection);
+		})
 		.catch(err => {
-			logError('shopify', err);
-			callback({'error': 'Collection Name '+collection_name+' not found.'});
+			logError('getCollectionByName', err);
+			return callback({'error': 'Collection Name '+collection_name+' not found.'});
 		});
 };
 
@@ -123,10 +131,12 @@ const setNewCollectionName = (shopify, collection_name, callback) => {
 	return shopify.customCollection.create({
 			"title": collection_name
 		})
-		.then(collection => callback(collection))
+		.then(collection => {
+			return callback(collection);
+		})
 		.catch(err => {
 			logError('shopify', err);
-			callback({'error': err});
+			return callback({'error': err});
 		});
 };
 const addProductToCollection = (shopify, collection_id, product_id, callback) => {
@@ -179,7 +189,7 @@ const addProductToCollection = (shopify, collection_id, product_id, callback) =>
 		})
 		.catch(err => {
 			logError('shopify', err);
-			callback({'error': err});
+			return callback({'error': err});
 		});
 };
 
@@ -196,10 +206,18 @@ const getProduct = (shopify, product_id, callback) => {
 	}
 
 	return shopify.product.get(product_id)
-		.then(product => callback(product))
+		.then(product => {
+			if(!!callback){
+				return callback(product);
+			}
+			return product;
+		})
 		.catch(err => {
 			logError('shopify', err);
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 const getProductsCollection = (shopify, collection_id, number, fields, callback) => {
@@ -240,23 +258,25 @@ const setProduct = (shopify, product_options, collectionId, callback) => {
 	return shopify.product.create(product_options)
 		.then(product => {
 			if(!!collectionId){
-				shopify.collect.create({
+				return shopify.collect.create({
 					'product_id': product.id,
 					'collection_id': collectionId
 				})
-				.then(collect => callback(product))
+				.then(product => {
+					return callback(product);
+				})
 				.catch(err => {
 					logError('shopify', err);
 					callback({'error': err});
 				})
 			}
 			else {
-				callback(product);
+				return callback(product);
 			}
 		})
 		.catch(err => {
 			logError('shopify', {'setProduct': err});
-			callback({'error': err});
+			return callback({'error': err});
 		});
 };
 
@@ -277,7 +297,7 @@ const getActiveTheme = (shopify) => {
 		})
 		.catch(err => {
 			logError('shopify', {'getActiveTheme': err});
-			callback({'error': err});
+			return callback({'error': err});
 		});
 };
 
@@ -296,7 +316,7 @@ const getThemeById = (shopify, id, callback) => {
 		})
 		.catch(err => {
 			logError('shopify', {'getThemeById': err});
-			callback({'error': err});
+			return callback({'error': err});
 		});
 };
 
@@ -330,7 +350,7 @@ const getSingleAsset = (shopify, theme_id, key, callback) => {
 		})
 		.catch(err => {
 			logError('shopify', {'getSingleAsset': err});
-			callback({'error': err});
+			return callback({'error': err});
 		});
 };
 
@@ -356,7 +376,7 @@ const getFilteredAssets = (shopify, theme_id, params, filter, callback) => {
 			return Promise.all(filteredAssets);
 		})
 		.catch(err => {
-			logError('shopify', {'getSingleAsset': err});
+			logError('shopify', {'getFilteredAssets': err});
 			callback({'error': err});
 		});
 };
@@ -373,7 +393,10 @@ const setSearchAsset = (shopify, theme_id, params, callback) => {
 
 	return shopify.asset.update(theme_id, params)
 		.then(asset => {
-			callback(asset);
+			if(!!callback){
+				return callback(asset);
+			}
+			return asset;
 		})
 		.catch(err => {
 			logError('shopify', {'setSearchAsset': err});
@@ -391,10 +414,18 @@ const getChargeById = (shopify, id) => {
 	}
 
 	return shopify.recurringApplicationCharge.get(id, ['status'])
-		.then(callback)
+		.then(charge => {
+			if(!!callback){
+				return callback(charge);
+			}
+			return charge;
+		})
 		.catch(err => {
 			logError('shopify', {'addRecurringCharge': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
@@ -404,10 +435,18 @@ const addRecurringCharge = (shopify, options, callback) => {
 	}
 
 	return shopify.recurringApplicationCharge.create(options)
-		.then(callback)
+		.then(charge => {
+			if(!!callback){
+				return callback(charge);
+			}
+			return charge;
+		})
 		.catch(err => {
 			logError('shopify', {'addRecurringCharge': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
@@ -417,10 +456,18 @@ const startRecurringCharge = (shopify, id, params, callback) => {
 	}
 
 	return shopify.recurringApplicationCharge.activate(id, params)
-		.then(callback)
+		.then(charge => {
+			if(!!callback){
+				return callback(charge);
+			}
+			return charge;
+		})
 		.catch(err => {
 			logError('shopify', {'startRecurringCharge': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
@@ -441,12 +488,16 @@ const getAllOrders = (shopify, params, callback) => {
 	return shopify.order.list(params)
 		.then(orders => {
 			if(!!callback){
-				callback(orders);
+				return callback(orders);
 			}
+			return orders;
 		})
 		.catch(err => {
 			logError('shopify', {'getAllOrders': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
@@ -455,32 +506,63 @@ const getAllOrders = (shopify, params, callback) => {
  */
 const getAllMeta = (shopify, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!params){
-		return {'error': "Error no params"};
+		return Promise.all([{'error': "Error no params"}]);
 	}
 
 	return shopify.metafield.list(params)
 		.then(metafields => {
 			if(!!callback){
-				callback(metafields);
+				return callback(metafields);
 			}
+			return metafields;
 		})
 		.catch(err => {
 			logError('shopify', {'getAllMeta': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
+		});
+};
+
+const getMetaByType = (shopify, params, callback) => {
+	if(!shopify || !shopify.metafield){
+		return Promise.all(noInstance);
+	}
+
+	console.log(params);
+
+	if(!params){
+		return Promise.all([{'error': "Invalid type or params"}]);
+	}
+
+	return shopify.metafield.list(params)
+		.then(metafields => {
+			if(!!callback){
+				return callback(metafields);
+			}
+			return metafields;
+		})
+		.catch(err => {
+			logError('shopify', {'getMetaByType': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
 const getMetaById = (shopify, id, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
-	if(!params){
-		return {'error': "Error no params"};
+	if(!id || !params){
+		return Promise.all([{'error': "Invalid id or params"}]);
 	}
 
 	return shopify.metafield.get(id, params)
@@ -491,17 +573,45 @@ const getMetaById = (shopify, id, params, callback) => {
 		})
 		.catch(err => {
 			logError('shopify', {'getMetaById': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
 /**
  * Customer
  */
+const getCustomerList = (shopify, email, params, callback) => {
+	if(!shopify){
+		return Promise.all(noInstance);
+	}
+	return shopify.customer.list(params)
+		.then(customers => {
+			if(!!callback){
+				return callback(customers);
+			}
+			return customers;
+		})
+		.catch(err => {
+			logError('shopify', {'getCustomerList': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
+		});
+};
+
 const getCustomerById = (shopify, id, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);;
 	}
+
+	if(!id || !params){
+		return Promise.all([{'error': "Invalid id or params"}]);
+	}
+
 	return shopify.customer.get(id, params)
 		.then(customer => {
 			if(!!callback){
@@ -511,7 +621,37 @@ const getCustomerById = (shopify, id, params, callback) => {
 		})
 		.catch(err => {
 			logError('shopify', {'getCustomerById': err});
-			callback({'error': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
+		});
+};
+
+const getCustomerMeta = (shopify, id, callback) => {
+	if(!shopify){
+		return Promise.all(noInstance);;
+	}
+
+	if(!id){
+		return Promise.all([{'error': "Invalid id"}]);
+	}
+
+	const url = shopify.customer.buildUrl(`${id}/metafields`);
+	
+	return shopify.request(url, 'GET', 'metafields')
+		.then(customer => {
+			if(!!callback){
+				return callback(customer);
+			}
+			return customer;
+		})
+		.catch(err => {
+			logError('shopify', {'getCustomerMeta': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
@@ -531,7 +671,7 @@ const getCustomerByEmail = (shopify, email, params, callback) => {
 				callback({'error': err});
 			}
 		});
-}
+};
 
 const updateCustomer = (shopify, id, params, callback) => {
 	if(!shopify){
@@ -549,6 +689,38 @@ const updateCustomer = (shopify, id, params, callback) => {
 			if(!!callback){
 				callback({'error': err});
 			}
+		});
+};
+
+const setCustomerMeta = (shopify, id, data, callback) => {
+	if(!shopify){
+		return Promise.all(noInstance);;
+	}
+
+	if(!id){
+		return Promise.all([{'error': "Invalid id"}]);
+	}
+
+	
+	if(!data){
+		return Promise.all([{'error': "Mising data to add"}]);
+	}
+
+	const url = shopify.customer.buildUrl(`${id}/metafields`);
+
+	return shopify.request(url, 'POST', 'metafield', data)
+		.then(metafield => {
+			if(!!callback){
+				return callback(metafield);
+			}
+			return metafield;
+		})
+		.catch(err => {
+			logError('shopify', {'setCustomerMeta': err});
+			if(!!callback){
+				return callback({'error': err});
+			}
+			return {'error': err};
 		});
 };
 
@@ -574,9 +746,13 @@ var SHAPI = (function(){
 		getAllOrders: getAllOrders,
 		getAllMeta: getAllMeta,
 		getMetaById: getMetaById,
+		getMetaByType: getMetaByType,
+		getCustomerList: getCustomerList,
 		getCustomerById: getCustomerById,
 		getCustomerByEmail: getCustomerByEmail,
-		updateCustomer: updateCustomer
+		updateCustomer: updateCustomer,
+		getCustomerMeta: getCustomerMeta,
+		setCustomerMeta: setCustomerMeta
 	};
 }());
 

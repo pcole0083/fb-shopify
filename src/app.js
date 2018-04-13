@@ -5,6 +5,7 @@ import helmet from 'helmet';
 
 import config from './config.js';
 import collectionsRouter from './server/routes/collections.js';
+import customersRouter from './server/routes/customers.js';
 import productsRouter from './server/routes/products.js';
 import ordersRouter from './server/routes/orders.js';
 import metafieldsRouter from './server/routes/metafields.js';
@@ -67,6 +68,8 @@ app
 	.use('/store', storeRouter)
 
 	.use('/collections', collectionsRouter)
+
+	.use('/customers', customersRouter)
 
 	.use('/products', productsRouter)
 

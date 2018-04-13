@@ -22,7 +22,7 @@ var attachEvent = function(selector, type, fn){
 
 var checkFirebaseCreds = (function(){
 	var setupFirebase = document.querySelector('#setupFirebase');
-	if(!!setupFirebase || !!setupComplete){
+	if(!!setupFirebase){ //|| !!setupComplete
 		$.ajax({
 			url: './configs/firebase',
 			type: 'GET',
@@ -420,7 +420,7 @@ function getCustomer(e) {
 	}
 
 	$.ajax({
-		url: './testing/customer',
+		url: './customers/customer',
 		type: 'POST',
 		dataType: 'json',
 		data: json
@@ -430,11 +430,26 @@ function getCustomer(e) {
 		}
 
 		let customer = returnedJson;
-		console.log(customer);
+		let _id = customer.id;
+		let row = document.querySelector('#customer_'+_id);
 
-		var pre = document.createElement('pre');
-		pre.innerHTML = JSON.stringify(customer);
-		form.appendChild(pre);
+		if(!!row){
+			var siblings = row.parentElement.children;
+			for (var i = 0; i < siblings.length; i++) {
+				var _row = siblings[i];
+				if(_row.id !== _id){
+					_row.classList.add('hide');
+				}
+				else {
+					_row.classList.add('remove');
+				}
+			}
+		}
+		else {
+			var pre = document.createElement('pre');
+			pre.innerHTML = JSON.stringify(customer);
+			form.appendChild(pre);
+		}
 		
 	}).fail(err => {
 		console.error(err);
@@ -454,7 +469,7 @@ function getCustomerByEmail(e) {
 	}
 
 	$.ajax({
-		url: './testing/customer/email',
+		url: './customers/customer/email',
 		type: 'POST',
 		dataType: 'json',
 		data: json
@@ -490,7 +505,7 @@ function updateCustomer(e) {
 	}
 
 	$.ajax({
-		url: './testing/customer/update',
+		url: './customers/customer/update',
 		type: 'POST',
 		dataType: 'json',
 		data: json
@@ -511,3 +526,87 @@ function updateCustomer(e) {
 	});
 }
 
+attachEvent('.customer-meta', 'click', getCustomerMeta);
+
+function getCustomerMeta(e){
+	e.preventDefault();
+	var btn = this,
+		customer_id = this.getAttribute('data-id'),
+		tbody = btn.parentElement.parentElement.parentElement,
+		tr_id = 'customer_'+customer_id;
+
+	var _tr = document.querySelector('#'+tr_id); 
+
+	$.ajax({
+		url: './customers/meta',
+		type: 'GET',
+		dataType: 'json',
+		data: { id: customer_id }
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let customer = returnedJson;
+		console.log(customer);
+
+		var _td_ = '<td colspan="7">'+JSON.stringify(customer)+'</td>';
+
+		if(!!_tr){
+			_tr.innerHTML = _td_;
+		}
+		else {
+			var tr = document.createElement('tr');
+			tr.id = tr_id;
+			tr.innerHTML = _td_;
+			tbody.appendChild(tr);
+		}
+
+		return customer;
+		
+	}).fail(err => {
+		console.error(err);
+	});
+}
+
+attachEvent('#addCustomerMeta', 'submit', setCustomerMeta);
+
+function setCustomerMeta(e){
+	e.preventDefault();
+	var form = this,
+		tbody = form.parentElement.parentElement.parentElement,
+		formData = new FormData(form),
+		submitData = {};
+		
+	for (var pair of formData.entries()) {
+	   submitData[pair[0]] = pair[1];
+	}
+
+	console.log(submitData);
+
+	$.ajax({
+		url: './customers/meta/update',
+		type: 'POST',
+		dataType: 'json',
+		data: submitData
+	}).then( (returnedJson) => {
+		if(returnedJson.error){
+			return console.error(returnedJson.error);
+		}
+
+		let metafield = returnedJson;
+		console.log(metafield);
+
+		var _td_ = '<td colspan="7">'+JSON.stringify(metafield)+'</td>';
+
+		var tr = document.createElement('tr');
+		tr.id = tr_id;
+		tr.innerHTML = _td_;
+		tbody.appendChild(tr);
+
+		return metafield;
+		
+	}).fail(err => {
+		console.error(err);
+	});
+}

@@ -1,0 +1,87 @@
+<% include ./partials/head %>
+<div id="setupComplete" class="row">
+    <div class="col-sm-9">
+        <h2>Test Shopify API Features</h2>
+        <div class="well well-lg">
+            <h2>Customers</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="1">ID</th>
+                        <th colspan="1">Name</th>
+                        <th colspan="1">Email</th>
+                        <th colspan="1">Status</th>
+                        <th colspan="1">Orders Count</th>
+                        <th colspan="1">Most Recent Order ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if(!!error) { %>
+                    <tr><td colspan="4"><pre><%= JSON.stringify(error) %></pre></td></tr>
+                <% } %>
+                <% if(!!customers && !!customers.length) { %>
+                    <% customers.forEach(function($customer, $i) { %>
+                        <tr id="<%= $customer.id %>">
+                            <td colspan="1"><%= $customer.id %></td>
+                            <td colspan="1"><%= $customer.first_name %> <%= $customer.last_name %></td>
+                            <td colspan="1"><%= $customer.email %></td>
+                            <td colspan="1"><%= $customer.state %></td>
+                            <td colspan="1"><%= $customer.orders_count %></td>
+                            <td colspan="1"><%= $customer.last_order_id %></td>
+                            <td colspan="1"><button class="btn cyan darken-2 waves-effect waves-light customer-meta" data-id="<%= $customer.id %>">Get Metadata</button></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7">
+                                <h5>Add New Metafield to Customer</h5>
+                                <form id="addCustomerMeta" action="#">
+                                    <input type="hidden" name="id" value="<%= $customer.id %>" />
+                                    <div class="input-field col s6">
+                                        <input type="text" id="namespace" name="namespace" />
+                                        <label for="namespace">Namespace</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <input type="text" id="key" name="key" />
+                                        <label for="namespace">Key</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <textarea id="value" name="value" class="materialize-textarea"></textarea>
+                                        <label for="value">Value</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <textarea id="description" name="description" class="materialize-textarea"></textarea>
+                                        <label for="description">Description</label>
+                                    </div>
+                                    <div class="input-field col s6 offset-s6">
+                                        <button type="submit" class="btn teal darken-4 waves-effect waves-light">ADD META</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } %>
+                </tbody>
+            </table>
+            <form id="getCustomer">
+                <label>Get Customer By ID</label>
+                <input name="id" placeholder="Customer ID" />
+                <button type="submit" class="btn btn-primary">Get Customer</button>
+            </form>
+            <hr>
+            <form id="getCustomerByEmail">
+                <label>Get Customer By Email</label>
+                <input type="email" tname="email" placeholder="testing@test.com" />
+                <button type="submit" class="btn btn-primary">Get Customer</button>
+            </form>
+            <hr>
+            <form id="updateCustomer">
+                <label>Update Customer Email</label>
+                <input id="customerID" type="hidden" name="id" value="" />
+                <input type="email" name="new_email" placeholder="testing@test.com" />
+                <button type="submit" class="btn btn-primary">Update Email</button>
+            </form>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>

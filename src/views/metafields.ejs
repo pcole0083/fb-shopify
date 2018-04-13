@@ -1,0 +1,54 @@
+<% include ./partials/head %>
+<div id="setupComplete" class="row">
+    <div class="col-sm-9">
+        <h2>Test Shopify API Features</h2>
+        <div class="well well-lg">
+            <h2>Metafields</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <% if(!!labels && !!labels.length) { %>
+                            <% labels.forEach(function($label, $i) { %>
+                                <td class="text-uppercase"><%= $label %></td>
+                            <% }); %>
+                        <% } %>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if(!!metafields) { %>
+                    <% metafields.forEach(function($metafield, $i) { %>
+                        <tr id="store_metafields_<%= $i %>">
+                            <% Object.keys($metafield).forEach(function($key) { %>
+                                <td><%= $metafield[$key] %></td>
+                            <% }); %>
+                        </tr>
+                    <% }); %>
+                <% } %>
+                <% if(!!error) { %>
+                    <tr><td id="store_error" colspan="<%= labels.length %>"><pre><%= JSON.stringify(error) %></pre></td></tr>
+                <% } %>
+                </tbody>
+            </table>
+            <form id="getMetafield">
+                <label>Get Metafield By ID</label>
+                <input name="id" placeholder="Metafield ID" />
+                <button type="submit" class="btn btn-primary">Get Metafield</button>
+            </form>
+            <hr>
+            <form id="getMetafieldsByNamespace">
+                <label>Get Metafields By Namespace</label>
+                <input type="text" tname="namespace" placeholder="namespace" />
+                <button type="submit" class="btn btn-primary">Get Customer</button>
+            </form>
+            <hr>
+            <form id="updateMetafield">
+                <label>Update Metafield</label>
+                <input id="customerID" type="hidden" name="id" value="" />
+                <input type="text" name="new_value" placeholder="qweqwe" />
+                <button type="submit" class="btn btn-primary">Update Metafield</button>
+            </form>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>

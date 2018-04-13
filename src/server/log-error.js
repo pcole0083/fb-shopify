@@ -7,6 +7,11 @@ function _writeToFile(dirPath, filename, errorData){
 		process.exit(1);
 	}
 
+	if(!dirPath){
+		console.warn('No dirPath to write to!');
+		process.exit(1);
+	}
+
 	var fullFilePath = dirPath+'/'+filename;
 
 	if(typeof errorData == 'object'){
@@ -18,9 +23,12 @@ function _writeToFile(dirPath, filename, errorData){
 	fs[typeOfWrite](fullFilePath, errorData+'\n', function(err){
 		if(err){
 			console.error(err);
-			process.exit(1);
+			//process.exit(1);
+			console.log(filename+' failed to write to file');
 		}
-		console.log(filename+' logged successfully');
+		else {
+			console.log(filename+' logged successfully');
+		}
 	});
 }
 
@@ -36,7 +44,7 @@ function mkdir(dir_path, callback){
 	mkdirp(dirPath, function(err){
 		if(!!err){
 			console.error(err);
-			process.exit(1);
+			//process.exit(1);
 		}
 		callback(dirPath);
 	});
@@ -53,6 +61,7 @@ function getDateString(){
 }
 
 export default function logError(apiName, errorMsg) {
+	console.log(errorMsg);
 	mkdir(apiName, (dirPath) => {
 		let fileName = 'errors_'+getDateString()+'.log';
 		_writeToFile(dirPath, fileName, errorMsg);

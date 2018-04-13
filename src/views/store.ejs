@@ -1,0 +1,32 @@
+<% include ./partials/head %>
+<div id="setupComplete" class="row">
+    <div class="col-sm-9">
+        <h2>Test Shopify API Features</h2>
+        <div class="well well-lg">
+            <h2>Store</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <% if(!!labels && !!labels.length) { %>
+                            <% labels.forEach(function($label, $i) { %>
+                                <td class="text-uppercase"><%= $label %></td>
+                            <% }); %>
+                        <% } %>
+                    </tr>
+                </thead>
+                <tbody>
+                <% if(!!values && !!values.length) { %>
+                    <% values.forEach(function($value, $i) { %>
+                        <td><%= $value %></td>
+                    <% }); %>
+                <% } %>
+                <% if(!!error) { %>
+                    <tr><td id="store_error" colspan="<%= labels.length %>"><pre><%= JSON.stringify(error) %></pre></td></tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <% include ./partials/sidebar_right %>
+</div>
+<% include ./partials/footer %>
