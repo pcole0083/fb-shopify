@@ -5,7 +5,7 @@ import logError from './log-error.js';
 const env = process.env.NODE_ENV || 'development';
 const env_config = config[env];
 
-const store_name = 'pixafly';
+const store_name = 'shopadmin2';
 const hostname = store_name+'.myshopify.com';
 
 const shopifyToken = new ShopifyToken(env_config.oauth);

@@ -16,6 +16,7 @@ import billingRouter from './server/routes/billing.js';
 import testingRouter from './server/routes/testing.js';
 import videoRouter from './server/routes/video.js';
 import searchRouter from './server/routes/search.js';
+import sliderRouter from './server/routes/slider.js';
 
 const env = process.env.NODE_ENV || 'development';
 const env_config = config[env];
@@ -82,6 +83,8 @@ app
 	.use('/video', videoRouter)
 
 	.use('/search', searchRouter)
+
+	.use('/slider', sliderRouter)
 
 	.listen(process.argv[2] || 3030, () => {
 		var port = process.argv[2] || 3030;

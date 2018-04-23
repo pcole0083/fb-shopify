@@ -32,30 +32,20 @@ const getSliders = function(req, res, next){
 
 sliderRouter
 	.route('/')
-	.all(urlencode, getSliders, (request, response) => {
+	.all(urlencode, /*getSliders,*/ (request, response) => {
 		if(!!request.session && !!request.session.authData){
 			//need to check if auth rejected or expired.
 			//response.sendFile('slider.html', { root: path.resolve(__dirname, '../../views')});
-			FBAPI
-				.getData(creatRefUrl(request, 'collections'))
-				.then((snapshot) => {
-					if( snapshot.exists() ){
-						var collections = [];
-						snapshot.forEach( (collectionSnap) => {
-							collections.push(collectionSnap.val());
-						});
-					}
-
-					response.render('slider', {
-						collections: collections,
-						name: 'slider',
-						slide_global: {
-							types: ['images', 'wysiwyg', 'products']
-						},
-						sliders: response.locals.sliders,
-						num_vids: response.locals.sliders.length
-					});
-				});
+			let collections = [];
+			response.render('slider', {
+				'error': request.session.error,
+				'name': 'slider',
+				'sliders': collections,
+				'slide_global': {
+					types: ['images', 'wysiwyg', 'products']
+				},
+				'num_vids': 0
+			});
 		}
 		else {
 			response.redirect('./auth');
