@@ -60,7 +60,7 @@ metaRouter
 		}
 
 		let productId = request.params['0'].substring(1);
-		console.log(productId);
+		//console.log(productId);
 		SHAPI
 			.getMetaById(SHAPI.getInstance(request), {'product_id': productId, 'fields': 'metafields'}, (metafields) => {
 				return response.status(200).json(metafields);

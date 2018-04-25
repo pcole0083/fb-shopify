@@ -61,9 +61,11 @@ function getDateString(){
 }
 
 export default function logError(apiName, errorMsg) {
-	console.log(errorMsg);
-	mkdir(apiName, (dirPath) => {
-		let fileName = 'errors_'+getDateString()+'.log';
-		_writeToFile(dirPath, fileName, errorMsg);
-	});
+	if(!!errorMsg){
+		console.log(errorMsg);
+		mkdir(apiName, (dirPath) => {
+			let fileName = 'errors_'+getDateString()+'.log';
+			_writeToFile(dirPath, fileName, errorMsg);
+		});
+	}
 }

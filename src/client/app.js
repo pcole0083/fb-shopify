@@ -574,15 +574,16 @@ attachEvent('#addCustomerMeta', 'submit', setCustomerMeta);
 function setCustomerMeta(e){
 	e.preventDefault();
 	var form = this,
+		tr_id = this.getAttribute('data-id'),
 		tbody = form.parentElement.parentElement.parentElement,
 		formData = new FormData(form),
 		submitData = {};
+
+	var _tr = document.querySelector('#customer_'+tr_id);
 		
 	for (var pair of formData.entries()) {
 	   submitData[pair[0]] = pair[1];
 	}
-
-	console.log(submitData);
 
 	$.ajax({
 		url: './customers/meta/update',
@@ -599,10 +600,15 @@ function setCustomerMeta(e){
 
 		var _td_ = '<td colspan="7">'+JSON.stringify(metafield)+'</td>';
 
-		var tr = document.createElement('tr');
-		tr.id = tr_id;
-		tr.innerHTML = _td_;
-		tbody.appendChild(tr);
+		if(!!_tr){
+			_tr.innerHTML = _td_;
+		}
+		else {
+			_tr = document.createElement('tr');
+			_tr.id = 'customer_'+tr_id;
+			_tr.innerHTML = _td_;
+			tbody.appendChild(_tr);
+		}
 
 		return metafield;
 		
@@ -610,3 +616,12 @@ function setCustomerMeta(e){
 		console.error(err);
 	});
 }
+
+function initSelects(){
+	var selects = document.querySelectorAll('select');
+  	for (var i = selects.length - 1; i >= 0; i--) {
+  		window.M.FormSelect.init(selects[i], {});
+  	}
+}
+
+document.addEventListener('DOMContentLoaded', initSelects);

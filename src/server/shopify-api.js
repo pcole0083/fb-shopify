@@ -220,6 +220,42 @@ const getProduct = (shopify, product_id, callback) => {
 			return {'error': err};
 		});
 };
+
+const getAllProducts = async (shopify, params) => {
+	if(!shopify){
+		return Promise.all([noInstance]);
+	}
+
+	if(!params){
+		params = {};
+	}
+
+	var promises = [];
+	var products_list = [];
+	var pageLimit = 250;
+	var productsCount = await shopify.product.count();
+
+	var loops = productsCount > pageLimit ? Math.ceil(productsCount/pageLimit) : productsCount;
+	
+	for (let i = 1; i <= loops; i++) {
+		let productsChunk = shopify.product.list({
+			limit: pageLimit,
+			page: i
+		}).then(products => {
+			products_list = products_list.concat(products);
+			return products;
+		})
+		.catch(err => {
+			logError('getAllProducts', err);
+			return Promise.all([{'error': err}]);
+		});
+		promises.push(productsChunk);
+	}
+	await Promise.all(promises);
+
+	return products_list;
+};
+
 const getProductsCollection = (shopify, collection_id, number, fields, callback) => {
 	if(!shopify){
 		return noInstance;
@@ -534,8 +570,6 @@ const getMetaByType = (shopify, params, callback) => {
 		return Promise.all(noInstance);
 	}
 
-	console.log(params);
-
 	if(!params){
 		return Promise.all([{'error': "Invalid type or params"}]);
 	}
@@ -732,6 +766,7 @@ var SHAPI = (function(){
 		getCollectionByName: getCollectionByName,
 		setNewCollectionName: setNewCollectionName,
 		addProductToCollection: addProductToCollection,
+		getAllProducts: getAllProducts,
 		getProduct: getProduct,
 		getProductsCollection: getProductsCollection,
 		setProduct: setProduct,

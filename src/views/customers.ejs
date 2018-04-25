@@ -4,6 +4,9 @@
         <h2>Test Shopify API Features</h2>
         <div class="well well-lg">
             <h2>Customers</h2>
+            <% if(!!products) { %>
+                <script id="productData" type="application/json"><%= JSON.stringify(products) %></script>
+            <% } %>
             <table>
                 <thead>
                     <tr>
@@ -18,7 +21,7 @@
                 </thead>
                 <tbody>
                 <% if(!!error) { %>
-                    <tr><td colspan="4"><pre><%= JSON.stringify(error) %></pre></td></tr>
+                    <tr><td colspan="7"><pre><%= JSON.stringify(error) %></pre></td></tr>
                 <% } %>
                 <% if(!!customers && !!customers.length) { %>
                     <% customers.forEach(function($customer, $i) { %>
@@ -33,27 +36,34 @@
                         </tr>
                         <tr>
                             <td colspan="7">
-                                <h5>Add New Metafield to Customer</h5>
-                                <form id="addCustomerMeta" action="#">
-                                    <input type="hidden" name="id" value="<%= $customer.id %>" />
+                                <h5>Add Customer Specific Prices</h5>
+                                <form id="addCustomerMeta" action="#" data-id="<%= $customer.id %>">
+                                    <input type="hidden" name="id_<%= $customer.id %>" value="<%= $customer.id %>" />
+                                    <input type="hidden" id="namespace_<%= $customer.id %>" name="namespace" value="pricing" />
                                     <div class="input-field col s6">
-                                        <input type="text" id="namespace" name="namespace" />
-                                        <label for="namespace">Namespace</label>
+                                        <% if(!!products && !!products.length) { %>
+                                        <select id="key_<%= $customer.id %>" name="key">
+                                            <option value="" disabled selected>Select Product</option>
+                                            <% products.forEach(function($product, $i) { %>
+                                            <option value="<%= $product.id %>"><%= $product.title %></option>
+                                            <% }); %>
+                                        </select>
+                                        <% } else { %>
+                                            <input type="text" id="key_<%= $customer.id %>" name="key" />
+                                        <% } %>
+                                        <label for="key">Product</label>
                                     </div>
                                     <div class="input-field col s6">
-                                        <input type="text" id="key" name="key" />
-                                        <label for="namespace">Key</label>
+                                        <i class="material-icons prefix">attach_money</i>
+                                        <input id="value_<%= $customer.id %>" type="text" name="value" class="validate">
+                                        <label for="value_<%= $customer.id %>" class="">Customer Specific Price</label>
+                                      </div>
+                                    <div class="input-field col s6">
+                                        <textarea id="description_<%= $customer.id %>" name="description" class="materialize-textarea"></textarea>
+                                        <label for="description_<%= $customer.id %>">Description</label>
                                     </div>
                                     <div class="input-field col s6">
-                                        <textarea id="value" name="value" class="materialize-textarea"></textarea>
-                                        <label for="value">Value</label>
-                                    </div>
-                                    <div class="input-field col s6">
-                                        <textarea id="description" name="description" class="materialize-textarea"></textarea>
-                                        <label for="description">Description</label>
-                                    </div>
-                                    <div class="input-field col s6 offset-s6">
-                                        <button type="submit" class="btn teal darken-4 waves-effect waves-light">ADD META</button>
+                                        <button type="submit" class="btn teal darken-4 waves-effect waves-light">Apply Price</button>
                                     </div>
                                 </form>
                             </td>

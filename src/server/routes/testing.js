@@ -49,8 +49,8 @@ testingRouter
 
 		SHAPI.getCustomerByEmail(SHAPI.getInstance(request), new_email, { 'email': new_email, 'limit': 1}, (customers) => {
 			let customer = customers[0];
-			console.log(customer.id);
-			console.log(customer.email);
+			//console.log(customer.id);
+			//console.log(customer.email);
 			if(!!customer && customer.id !== id){
 				console.log('Error time');
 				return response.status(200).json({'error': 'This email is already in use.'});

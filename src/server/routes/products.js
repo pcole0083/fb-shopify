@@ -109,7 +109,7 @@ productsRouter
 				return Promise.all([product, FBAPI.addData(creatRefUrl(request, 'products'), product)])
 			})
 			.then(results => {
-				console.log(results);
+				//console.log(results);
 				return response.status(200).json([{'updated': results[0].title}, results[0]]);
 			});
 	});

@@ -6,31 +6,51 @@ import SHAPI from '../shopify-api.js';
 const customersRouter = express.Router();
 const urlencode = bodyParser.urlencoded({ extended: false });
 
-customersRouter
-	.route('/')
-	.all(urlencode, (request, response, next) =>{
-		if(!!request.session && !!request.session.authData){
-			SHAPI
-				.getCustomerList(SHAPI.getInstance(request), {})
-				.then(customers => {
-					if(!customers.length){
-						customers = [{
-							'id': '-1',
-							'first_name': 'No customers found',
-							'email': 'N/A'
-						}];
-					}
-					request.session.customers = customers;
-					request.session.error = null;
-					next();
-				})
-				.catch(err => {
-					request.session.customers = [{
+const getCustomersData = function(request) {
+	return SHAPI
+			.getCustomerList(SHAPI.getInstance(request), {})
+			.then(customers => {
+				if(!customers.length){
+					customers = [{
 						'id': '-1',
 						'first_name': 'No customers found',
 						'email': 'N/A'
 					}];
-					request.session.error = err;
+				}
+				request.session.customers = customers;
+				request.session.error = null;
+			})
+			.catch(err => {
+				request.session.customers = [{
+					'id': '-1',
+					'first_name': 'No customers found',
+					'email': 'N/A'
+				}];
+				request.session.error = err;
+			});
+};
+
+const getAllProducts = function(request){
+	return SHAPI.getAllProducts(SHAPI.getInstance(request))
+		.then(products => {
+			if(!products){
+				products = [];
+			}
+			request.session.products = products;
+			request.session.error = !!request.session.error ? request.session.error : null;
+		})
+		.catch(err => {
+			request.session.products = [];
+			request.session.error = err;
+		});
+}
+
+customersRouter
+	.route('/')
+	.all(urlencode, (request, response, next) =>{
+		if(!!request.session && !!request.session.authData){
+			Promise.all([getCustomersData(request), getAllProducts(request)])
+				.then(()=> {
 					next();
 				});
 		}
@@ -42,7 +62,8 @@ customersRouter
 		response.render('customers', {
 			'error': request.session.error,
 			'name': 'customers',
-			'customers': request.session.customers
+			'customers': request.session.customers,
+			'products': request.session.products
 		});
 	});
 
@@ -144,7 +165,7 @@ customersRouter
 			"email": new_email,
 			"note": "Customer updated via API."
 		}; //add old email to meta_data?
-		console.log('Stil made it');
+		//console.log('Stil made it');
 		SHAPI.updateCustomer(SHAPI.getInstance(request), id, update_data, (data) => {
 			return response.status(200).json(data);
 		});

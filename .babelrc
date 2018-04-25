@@ -1,4 +1,7 @@
 {
   "presets": ["env"],
-  "plugins": ["inline-json-import", {}]
+  "plugins": [
+  	"transform-runtime",
+  	"inline-json-import", {}
+  ]
 }

@@ -6,7 +6,7 @@
   "scripts": {
     "install": "if [ ! -d /build ]; then mkdir build && mkdir build/client && mkdir build/public && mkdir build/server && mkdir build/views fi",
     "test": "npm -v",
-    "build:client": "browserify ./src/client/app.js -t [ babelify --presets es2015 ] -o build/client/all.js",
+    "build:client": "browserify ./src/client/app.js -t [ babelify --presets env ] -o build/client/all.js",
     "build:server": "babel ./src/app.js -o ./build/app.js && babel ./src/config.js -o ./build/config.js && babel ./src/server -d build/server && babel ./src/public -d build/public",
     "build:views": "rm -rf ./build/views && cp -R ./src/views ./build/views",
     "build": "npm run build:views && npm run build:client && npm run build:server",
@@ -36,7 +36,10 @@
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-core": "^6.26.0",
     "babel-plugin-inline-json-import": "^0.1.6",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.1.4",
     "babel-preset-es2015": "^6.18.0",
     "babelify": "^7.3.0",
