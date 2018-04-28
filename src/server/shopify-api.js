@@ -325,6 +325,10 @@ const getActiveTheme = (shopify) => {
 		return Promise.all(noInstance);
 	}
 
+	if(!shopify.theme){
+		return Promise.all(noInstance);
+	}
+
 	return shopify.theme.list({'limit': 10})
 		.then(themes => {
 			return themes.find(theme => {

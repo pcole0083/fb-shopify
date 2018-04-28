@@ -15,9 +15,18 @@
 		<div class="row">
 			<div class="collection">
 			<% if(!!schemas && !!schemas.length) { %>
+				<% if(!!header) { %>
+					<a href="#!" class="collection-item"><i class="material-icons left"><%= header.icon %></i><span class="truncate"><%= header.name %></span></a>
+				<% } %>
 				<% schemas.forEach(function(schema, $i) { %>
-					<a href="#!" class="collection-item"><div class="valign-wrapper"><i class="material-icons v">description</i><%= schema.name %></div></a>
+					<% if(!!schema.name) { %>
+					<a href="#!" class="collection-item"><i class="material-icons left"><% if (schema.icon) { %><%= schema.icon %><% } else { %>dashboard<% } %></i><span class="truncate"><%= schema.name %></span><i class="material-icons secondary-content">more_vert</i></a>
+					<% } %>
 				<% }); %>
+				<% if(!!footer) { %>
+					<a href="#!" class="collection-item"><i class="material-icons left"><%= footer.icon %></i><span class="truncate"><%= footer.name %></span></a>
+				<% } %>
+				<a id="addSection" href="#!" class="collection-item"><i class="material-icons left">add_box</i><span class="truncate">Add Section</span></a>
 			<% } %>
 			</div>
 		</div>
