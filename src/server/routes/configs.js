@@ -26,7 +26,7 @@ function _writeToFile(dirPath, filename, jsonConfig, callback){
 
 	fs.writeFile(dirPath+'/'+filename, jsonConfig, function(err){
 		if(err){
-			console.error(err);
+			console.error('_writeToFile: '+err);
 			callback({'error': err});
 		}
 		else {

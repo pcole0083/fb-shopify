@@ -26,7 +26,7 @@ const noInstance = {'error': 'Instance of Shopify not found'};
 const getInstance = (request) => {
 	//console.log(request.session.sp_instance);
 	if(!request.session || !request.session.authData){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 	
 	request.session.sp_instance = new Shopify(request.session.authData);
@@ -41,7 +41,7 @@ const getInstance = (request) => {
  */
 const getStore = (shopify, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 	return shopify.shop.get({
 			fields: ['id', 'name', 'email', 'address1', 'address2', 'city', 'zip', 'country', 'currency', 'plan_name', 'myshopify_domain', 'force_ssl']
@@ -70,7 +70,7 @@ const getStore = (shopify, callback) => {
  */
 const getCollectionById = (shopify, collection_id, number, fields, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -93,7 +93,7 @@ const getCollectionById = (shopify, collection_id, number, fields, callback) => 
 };
 const getCollectionByName = (shopify, collection_name, fields, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -121,7 +121,7 @@ const getCollectionByName = (shopify, collection_name, fields, callback) => {
  */
 const setNewCollectionName = (shopify, collection_name, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -141,7 +141,7 @@ const setNewCollectionName = (shopify, collection_name, callback) => {
 };
 const addProductToCollection = (shopify, collection_id, product_id, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -202,7 +202,7 @@ const addProductToCollection = (shopify, collection_id, product_id, callback) =>
  */
 const getProduct = (shopify, product_id, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	return shopify.product.get(product_id)
@@ -258,7 +258,7 @@ const getAllProducts = async (shopify, params) => {
 
 const getProductsCollection = (shopify, collection_id, number, fields, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -284,7 +284,7 @@ const getProductsCollection = (shopify, collection_id, number, fields, callback)
  */
 const setProduct = (shopify, product_options, collectionId, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -322,7 +322,7 @@ const setProduct = (shopify, product_options, collectionId, callback) => {
 
 const getActiveTheme = (shopify) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	return shopify.theme.list({'limit': 10})
@@ -339,7 +339,7 @@ const getActiveTheme = (shopify) => {
 
 const getThemeById = (shopify, id, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -370,7 +370,7 @@ const getThemeById = (shopify, id, callback) => {
  */
 const getSingleAsset = (shopify, theme_id, key, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -392,14 +392,14 @@ const getSingleAsset = (shopify, theme_id, key, callback) => {
 
 const getFilteredAssets = (shopify, theme_id, params, filter, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
 		callback = noop;
 	}
 
-	return shopify.asset.list(theme_id, params)
+	return shopify.asset.list(+theme_id, params)
 		.then(assets => {
 			let fetchedAssets = assets.filter(asset => {
 				return !!~asset.key.indexOf(filter); //return true if /search exists in the string
@@ -420,7 +420,7 @@ const getFilteredAssets = (shopify, theme_id, params, filter, callback) => {
 
 const setSearchAsset = (shopify, theme_id, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!callback){
@@ -446,7 +446,7 @@ const setSearchAsset = (shopify, theme_id, params, callback) => {
 
 const getChargeById = (shopify, id) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	return shopify.recurringApplicationCharge.get(id, ['status'])
@@ -467,7 +467,7 @@ const getChargeById = (shopify, id) => {
 
 const addRecurringCharge = (shopify, options, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	return shopify.recurringApplicationCharge.create(options)
@@ -488,7 +488,7 @@ const addRecurringCharge = (shopify, options, callback) => {
 
 const startRecurringCharge = (shopify, id, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	return shopify.recurringApplicationCharge.activate(id, params)
@@ -512,7 +512,7 @@ const startRecurringCharge = (shopify, id, params, callback) => {
  */
 const getAllOrders = (shopify, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	if(!params){
@@ -691,7 +691,7 @@ const getCustomerMeta = (shopify, id, callback) => {
 
 const getCustomerByEmail = (shopify, email, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 	return shopify.customer.list(params)
 		.then(customers => {
@@ -709,7 +709,7 @@ const getCustomerByEmail = (shopify, email, params, callback) => {
 
 const updateCustomer = (shopify, id, params, callback) => {
 	if(!shopify){
-		return noInstance;
+		return Promise.all(noInstance);
 	}
 
 	shopify.customer.update(id, params)

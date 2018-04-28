@@ -44,9 +44,11 @@
         }
     }
 </style>
-<div id="setupComplete" class="row hidden">
-    <div class="col-sm-9">
-        <h2>Search Indexes</h2>
+<div id="setupComplete" class="row">
+    <div class="col s9">
+        <%- include ./partials/page_builder_left %>
+        <%- include ./partials/page_builder_right %>
+        <div class="clearfix"></div>
         <div class="well well-lg">
             <% if(!!assets && !!assets.length) { %>
             <ol class="list-group">
@@ -73,7 +75,7 @@
                                     <input class="current-theme-id-<%= $i %>" type="hidden" name="theme_id" value="<%= $asset.theme_id %>" />
                                     <input class="asset-type" type="hidden" name="type" value="<%= $asset.type %>" />
                                     <input class="asset-id" type="hidden" name="asset_id" value="<%= $asset.key %>" />
-                                    <div class="btn-group">
+                                    <div class="btn-group text-right">
                                         <button type="submit" class="btn btn-primary btn-lg">Save</button>
                                     </div>
                                 </form>

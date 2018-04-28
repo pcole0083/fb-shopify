@@ -22,7 +22,7 @@ function _writeToFile(dirPath, filename, errorData){
 	
 	fs[typeOfWrite](fullFilePath, errorData+'\n', function(err){
 		if(err){
-			console.error(err);
+			console.error('_writeToFile: '+err);
 			//process.exit(1);
 			console.log(filename+' failed to write to file');
 		}
@@ -43,7 +43,7 @@ function mkdir(dir_path, callback){
 
 	mkdirp(dirPath, function(err){
 		if(!!err){
-			console.error(err);
+			console.error('mkdirp: '+err);
 			//process.exit(1);
 		}
 		callback(dirPath);
@@ -62,7 +62,7 @@ function getDateString(){
 
 export default function logError(apiName, errorMsg) {
 	if(!!errorMsg){
-		console.log(errorMsg);
+		console.log('errorMsg: '+ errorMsg);
 		mkdir(apiName, (dirPath) => {
 			let fileName = 'errors_'+getDateString()+'.log';
 			_writeToFile(dirPath, fileName, errorMsg);

@@ -116,7 +116,7 @@ authRouter
 					SHAUTH
 						.getAccessToken(queryData.shop, queryData.code, (access_token) =>{
 							if(!!access_token.error){
-								console.log(access_token.error);
+								console.log("access_token err:"+access_token.error);
 								request.error_obj = access_token.error;
 							}
 							else {

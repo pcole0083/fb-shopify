@@ -1,0 +1,13 @@
+<main class="pagebuilder-right col s9 blue-grey lighten-5">
+    <header class="pagebuilder-right-header row">
+        <div class="col offset-s8 s4">
+            <button type="submit" class="btn btn-primary btn-lg pull-right">Save</button>
+        </div>
+        <% if(!!error) { %>
+            <div class="col s12"><pre><%= JSON.stringify(error) %></pre></div>
+        <% } %>
+    </header>
+    <div class="preview-main">
+        <h1>TODO</h1>
+    </div>
+</main>
