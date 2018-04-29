@@ -1,7 +1,11 @@
 <% include ./partials/head %>
 <style>
     .collection-item .truncate { display: inline-block; max-width: 122px; vertical-align: middle; }
+    .collection a.collection-item { color: #0091ea; }
     .collection a.collection-item:hover { text-decoration: none; }
+    .collection-item .btn-small {
+        margin-top: -4px;
+    }
     .dashed-wrapper { padding: 10px 0; border: 3px dashed #ccc; }
     .ordered-list-group-item { display: list-item;clear: both; }
     .ordered-list-group-item > .row { /* display: inline-block; */ clear: both; }
@@ -43,6 +47,17 @@
         }
         .data-list .list-group-item > p .btn:last-child .glyphicon-plus {
             left: 1px;
+        }
+    }
+    @media (min-width: 768px){
+        .collection-item .btn-small {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 200ms linear;
+        }
+        .collection-item:hover .btn-small {
+            opacity: 1;
+            pointer-events: all;
         }
     }
 </style>
