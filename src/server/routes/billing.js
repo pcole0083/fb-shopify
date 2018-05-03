@@ -45,7 +45,7 @@ billingRouter
 	.route('/:name*?')
 	.all(setStoreData)
 	.get(urlencode, (request, response) => {
-		console.log(request.params);
+		//console.log(request.params);
 		let params = env_config.billing;
 		let reqPrice = request.params['0'].substring(1);
 

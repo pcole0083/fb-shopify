@@ -8,6 +8,31 @@
         <% } %>
     </header>
     <div class="preview-main">
-        <h1>TODO</h1>
+        <% if(!templates || templates.length === 0) { %>
+            <div class="row">
+            <div class="col s12 m12">
+              <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                  <span class="card-title">Start Customizing A Template</span>
+                  <p>To begin click on <b>Edit Existing</b> or <b>Create New</b> below. Edit existing will bring up a list of templates already in your theme. Create New will start with a new blank template you make from scratch.</p>
+                </div>
+                <div class="card-action">
+                  <a id="getTemplate" href="#templatesModal" class="modal-trigger">Edit Existing</a>
+                  <a id="createTemplate" href="#">Create New</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+    </div>
+    <div id="templatesModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h3 class="header">Select a Template</h3>
+            <div class="modal-content-inner">
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>

@@ -38,6 +38,40 @@ var checkFirebaseCreds = (function(){
 	}
 }());
 
+//Fetch wrapper function
+var postData = function(url, type, data, callback, errorback) {
+    // Default options are marked with *
+    return fetch(url, {
+        body: data, // must match 'Content-Type' header
+        cache: 'default', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, same-origin, *omit
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        method: type, // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, cors, *same-origin
+        redirect: 'follow', // *manual, follow, error
+        referrer: 'client', // *client, no-referrer
+    })
+    .then(function(response){
+        if(response.ok){
+            return Promise.resolve(response.json()); // parses response to JSON
+        }
+        return Promise.reject(new Error(response.statusText));
+    })
+    .catch(function(error){
+        if(!!errorback){
+            errorback(error);
+        }
+        return console.error('Request failed:', error);
+    })
+    .then(function(json){
+        if(!!callback){
+            callback(json);
+        }
+    });
+};
+
 // var getStoreInfo = (function(){
 // 	$.ajax({
 // 		url: './auth',
@@ -617,10 +651,41 @@ function setCustomerMeta(e){
 	});
 }
 
+function getShopifyTemplates(){
+	var listStart = '<ul class="collection">';
+	var listEnd = '</ul>';
+	var template = '<li class="collection-item"><div class="text-capitalize">{{name}}<a href="#!" class="secondary-content" data-key="{{asset_key}}"><i class="material-icons">add_circle_outline</i></a></div></li>';
+
+	var templatesModalContent = document.querySelector('#templatesModal .modal-content-inner'),
+		listItemWrapper = templatesModalContent.querySelector('.collection');
+
+	if(!listItemWrapper){
+		postData('./search/get/templates', 'get', {}, function(res){
+			var assets = !!res.assets ? res.assets : res.schema;
+			var list = '';
+			var listItems = assets.map(function(asset){
+				return template.replace('{{name}}', asset.name).replace('{{asset_key}}', asset.asset_name);
+			}).join('');
+
+			list = listStart+listItems+listEnd;
+			templatesModalContent.innerHTML = list;
+		}, function(err){
+			console.error(err);
+		});
+	}
+}
+
 function initSelects(){
 	var selects = document.querySelectorAll('select');
   	for (var i = selects.length - 1; i >= 0; i--) {
   		window.M.FormSelect.init(selects[i], {});
+  	}
+
+  	var modals = document.querySelectorAll('.modal');
+  	for (var i = modals.length - 1; i >= 0; i--) {
+  		window.M.Modal.init(modals[i], {
+  			onOpenStart: getShopifyTemplates
+  		});
   	}
 }
 
